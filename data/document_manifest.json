@@ -1,0 +1,27 @@
+{
+  "_comment": "One entry per PDF filename (without .pdf) placed in data/raw_pdfs/. Fill this in before running embed_and_load.py — clause text alone doesn't reliably state regulator/effective_date.",
+  "_example": {
+    "regulator": "RBI",
+    "effective_date": "2023-04-19",
+    "topic_tags": ["KYC", "lending"],
+    "supersedes_clause_id": ""
+  },
+  "rbi_kyc_master_direction": {
+    "regulator": "RBI",
+    "effective_date": "2016-02-25",
+    "topic_tags": ["KYC", "customer due diligence"],
+    "supersedes_clause_id": ""
+  },
+  "rbi_interest_rate_advances": {
+    "regulator": "RBI",
+    "effective_date": "2016-03-03",
+    "topic_tags": ["interest rate", "MCLR", "floating rate", "loan foreclosure"],
+    "supersedes_clause_id": ""
+  },
+  "rbi_microfinance_fair_practices": {
+    "regulator": "RBI",
+    "effective_date": "2022-03-14",
+    "topic_tags": ["fair practices code", "loan recovery", "grievance redressal", "prepayment"],
+    "supersedes_clause_id": ""
+  }
+}

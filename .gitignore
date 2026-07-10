@@ -1,0 +1,12 @@
+# Environment
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Data - don't commit large binary artifacts or the vector store
+data/qdrant_store/
+data/raw_pdfs/*.pdf
+
+# OS
+.DS_Store
