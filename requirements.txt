@@ -14,3 +14,7 @@ groq==1.5.0
 # --- Eval / utils ---
 pandas>=2.2.3
 tqdm==4.66.5
+
+# --- API server (Phase 5 UI) ---
+fastapi==0.139.0
+uvicorn==0.51.0
