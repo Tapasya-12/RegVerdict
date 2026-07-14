@@ -7,8 +7,9 @@ export default function IntakeForm({ onSubmit, disabled, indexedClauseCount = 26
   const [policyText, setPolicyText] = useState(EXAMPLE_TEXT);
   const [ripples, setRipples] = useState([]);
   const btnRef = useRef(null);
+  const textareaRef = useRef(null);
 
-  function handleClick(e) {
+  async function handleClick(e) {
     const btn = btnRef.current;
     if (btn) {
       const rect = btn.getBoundingClientRect();
@@ -26,8 +27,14 @@ export default function IntakeForm({ onSubmit, disabled, indexedClauseCount = 26
       }, 650);
     }
 
-    if (!policyText.trim() || disabled) return;
-    onSubmit(policyText.trim());
+    const text = policyText.trim();
+    if (!text || disabled) return;
+
+    const succeeded = await onSubmit(text);
+    if (succeeded) {
+      setPolicyText("");
+      textareaRef.current?.focus();
+    }
   }
 
   return (
@@ -37,6 +44,7 @@ export default function IntakeForm({ onSubmit, disabled, indexedClauseCount = 26
         <span>RBI · KYC · INTEREST · MFI</span>
       </div>
       <textarea
+        ref={textareaRef}
         className="intake-field"
         placeholder="e.g. We charge a 2% processing fee on personal loans above ₹5 lakh."
         value={policyText}

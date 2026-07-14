@@ -7,7 +7,9 @@ import { useRef } from "react";
 const TILTS = [0, -0.6, 0.5, -0.4, 0.6, -0.3, 0.4, -0.5];
 const SEQ_STEP_SECONDS = 0.5;
 
-const STAMP_CLASS_BY_VERDICT = {
+// Exported so AuditTrail.jsx's verdict badges reuse the same mapping —
+// one source of truth for verdict -> color across the app.
+export const STAMP_CLASS_BY_VERDICT = {
   Compliant: "compliant",
   "Non-Compliant": "noncompliant",
   "Requires Legal Review": "review",
@@ -23,6 +25,7 @@ const STAMP_LABEL_BY_VERDICT = {
 
 export default function ExhibitCard({
   index,
+  isNewest,
   document_name,
   clause_number,
   policy_summary,
@@ -41,6 +44,10 @@ export default function ExhibitCard({
   const isNoisyTier = !!grounding_note && /noise-tolerant/i.test(grounding_note);
   const hasQuote = !!evidence_quote && evidence_quote.trim().length > 0;
   const belowThreshold = typeof confidence === "number" && confidence < 0.9;
+  // True empty-corpus-match: no clause was retrieved at all, as opposed to a
+  // clause being retrieved but failing grounding (which still has a real
+  // document_name/clause_number to cite).
+  const noMatch = !document_name;
 
   function handleMouseMove(e) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -60,13 +67,13 @@ export default function ExhibitCard({
   return (
     <div
       ref={cardRef}
-      className="exhibit"
+      className={`exhibit${isNewest ? "" : " settled"}`}
       style={{ "--tilt": `${tilt}deg`, "--seq": `${seq}s` }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       <span className="exhibit-tab">
-        EXHIBIT — {document_name} §{clause_number}
+        {noMatch ? "EXHIBIT — no matching clause found" : `EXHIBIT — ${document_name} §${clause_number}`}
       </span>
       <div className="exhibit-body">
         <p className="exhibit-summary">{policy_summary}</p>

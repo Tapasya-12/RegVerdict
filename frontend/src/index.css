@@ -79,6 +79,11 @@ body {
   position: relative;
   z-index: 1;
 }
+/* The audit ledger needs real table width — the 760px exhibit-card column
+   is the right measure for prose, not for a 5-column register. */
+.wrap-wide {
+  max-width: 1040px;
+}
 
 /* ---------- masthead ---------- */
 .masthead {
@@ -356,6 +361,44 @@ textarea.intake-field::placeholder {
   box-shadow: 0 30px 56px -18px rgba(0, 0, 0, 0.65), 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* ---------- settled: applied to every exhibit except the newest ----------
+   Each card only plays its entrance/reveal sequence once, the moment it's
+   added. Without this, re-rendering the list when a new card is appended
+   would risk earlier cards replaying their fade-up/sweep/stamp-land
+   animations. Rather than relying on React not remounting already-settled
+   DOM nodes, this pins them to their finished end-state explicitly. */
+.exhibit.settled {
+  opacity: 1;
+  transform: rotate(var(--tilt, 0deg));
+  animation: none;
+}
+.exhibit.settled .exhibit-tab,
+.exhibit.settled .exhibit-summary,
+.exhibit.settled .quote-block,
+.exhibit.settled .reasoning,
+.exhibit.settled .exhibit-footer,
+.exhibit.settled .stamp,
+.exhibit.settled .flag-mark {
+  opacity: 1;
+  background-size: 100% 100%;
+  animation: none;
+}
+.exhibit.settled .stamp {
+  transform: rotate(-7deg) scale(1);
+}
+.exhibit.settled .flag-mark {
+  transform: rotate(-4deg);
+}
+.exhibit.settled .stamp::after {
+  /* ink-bleed ring fades OUT to invisible — its settled end-state is gone. */
+  display: none;
+}
+.exhibit.settled .flag-mark::after {
+  /* underline-draw ends fully drawn — its settled end-state is visible. */
+  animation: none;
+  transform: scaleX(1);
+}
+
 .exhibit-tab {
   display: inline-flex;
   align-items: center;
@@ -604,4 +647,183 @@ textarea.intake-field::placeholder {
     transform: none !important;
     background-size: 100% 100% !important;
   }
+}
+
+/* ---------- tab switcher (Workspace / Audit Trail) ---------- */
+.tab-bar {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(216, 185, 120, 0.25);
+}
+.tab-button {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 0 12px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.tab-button:hover {
+  color: var(--parchment);
+}
+.tab-button.active {
+  color: var(--gazette-gold);
+  border-bottom-color: var(--gazette-gold);
+}
+
+/* ---------- audit trail — a ledger, not a data-grid ---------- */
+.audit-trail {
+  background: var(--kraft);
+  border-radius: 3px;
+  padding: 24px 28px 28px;
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.audit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--kraft-shadow);
+}
+.audit-filters label {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-text-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.audit-filters select,
+.audit-filters input[type="text"],
+.audit-filters input[type="date"] {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--ink-text);
+  background: var(--parchment);
+  border: 1px solid var(--kraft-shadow);
+  border-radius: 2px;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.audit-filters select:focus,
+.audit-filters input:focus {
+  border-color: var(--gazette-gold);
+}
+
+.audit-export-btn {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: var(--ink-navy);
+  color: var(--parchment);
+  border: none;
+  padding: 9px 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  margin-left: auto;
+}
+.audit-export-btn:hover:not(:disabled) {
+  background: var(--ink-navy-deep);
+  transform: translateY(-1px);
+}
+.audit-export-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.audit-empty,
+.audit-error {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-text-soft);
+  padding: 32px 0;
+  text-align: center;
+}
+.audit-error {
+  color: var(--seal-red);
+}
+
+.audit-table-wrap {
+  overflow-x: auto;
+}
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.audit-table th {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  background: var(--ink-navy);
+  text-align: left;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+.audit-table th:first-child {
+  border-radius: 3px 0 0 0;
+}
+.audit-table th:last-child {
+  border-radius: 0 3px 0 0;
+}
+.audit-table td {
+  font-family: "Newsreader", serif;
+  font-size: 14px;
+  color: var(--ink-text);
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--kraft-shadow);
+  vertical-align: top;
+}
+.audit-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.audit-table tbody tr:hover {
+  background: rgba(212, 148, 26, 0.06);
+}
+.audit-table .audit-mono {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12.5px;
+  color: var(--ink-text-soft);
+  white-space: nowrap;
+}
+
+.verdict-badge {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  padding: 3px 9px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.verdict-badge.compliant {
+  color: var(--seal-green);
+}
+.verdict-badge.noncompliant {
+  color: var(--seal-red);
+}
+.verdict-badge.review {
+  color: var(--gazette-gold);
+}
+.verdict-badge.conflict {
+  color: var(--archive-plum);
 }

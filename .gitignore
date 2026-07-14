@@ -7,6 +7,7 @@ __pycache__/
 # Data - don't commit large binary artifacts or the vector store
 data/qdrant_store/
 data/raw_pdfs/*.pdf
+data/audit_log.jsonl
 
 # OS
 .DS_Store
