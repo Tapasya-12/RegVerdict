@@ -1,0 +1,47 @@
+[INFO] Resuming from checkpoint — 10/30 cases already completed, skipping those.
+[11/30] Running: We apply these interest-rate-on-advances directions to all our domesti...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 332 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 98186, Requested 2408. Please try again in 8m33.216s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 1 at Sat Jul 11 23:06:25 UTC 2026 ===

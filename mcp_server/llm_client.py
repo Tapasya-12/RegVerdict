@@ -1,8 +1,8 @@
 """
 Groq-based replacement for claude_client.py — same generate_verdict()
-interface (policy_text + retrieved_chunks -> VerdictOutput, top_chunk), so
-tools.py only needs one import line changed. Swapped to Groq for its free
-tier; Groq's Python SDK follows the same chat-completions message shape as
+interface (policy_text + retrieved_chunks -> VerdictOutput), so tools.py
+only needs one import line changed. Swapped to Groq for its free tier;
+Groq's Python SDK follows the same chat-completions message shape as
 OpenAI, so this looks structurally similar to the Anthropic version.
 
 Model: llama-3.3-70b-versatile — good general reasoning quality, and Groq
@@ -53,14 +53,16 @@ no preamble:
 """
 
 
-def generate_verdict(policy_text: str, retrieved_chunks: list[dict]) -> tuple[VerdictOutput, dict]:
+def generate_verdict(policy_text: str, retrieved_chunks: list[dict]) -> VerdictOutput:
     """
     retrieved_chunks: output of HybridRetriever.retrieve_with_rerank() — each
     dict has 'text', 'document_name', 'clause_number', 'effective_date', etc.
 
-    Returns (VerdictOutput, top_chunk) — top_chunk is returned separately so
-    the caller can pass its raw text to grounding.apply_grounding_check()
-    without re-deriving which chunk the model was actually shown as primary.
+    source_clause is seeded here from rank-1 as a placeholder only — the LLM
+    is shown all of retrieved_chunks and may draw evidence_quote from any of
+    them, so the caller MUST immediately pass retrieved_chunks (not just the
+    top one) to grounding.apply_grounding_check(), which searches all of them
+    for the actual match and corrects source_clause accordingly.
     """
     if not retrieved_chunks:
         raise ValueError("generate_verdict called with no retrieved chunks — caller should "
@@ -113,4 +115,4 @@ def generate_verdict(policy_text: str, retrieved_chunks: list[dict]) -> tuple[Ve
         recommended_action=parsed["recommended_action"],
     )
 
-    return verdict_output, top_chunk
+    return verdict_output

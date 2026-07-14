@@ -1,0 +1,752 @@
+[
+  {
+    "row": {
+      "policy_text": "For a telegraphic transfer of Rs 75,000, we debit the customer's account rather than accepting cash, and we print the purchaser's name on the face of the instrument.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "65",
+      "notes": "Clause 65: remittances of Rs 50,000+ must be by debit to account (not cash), and the purchaser's name must appear on the instrument."
+    },
+    "result": {
+      "policy_summary": "Debiting customer's account for telegraphic transfer of Rs 75,000 and printing purchaser's name on the instrument",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "Any remittance of funds by way of demand draft, mail/telegraphic transfer/NEFT/IMPS or any other mode and issue of travelers\u2019 cheques for value of rupees fifty thousand and above shall be effected by debit to the customer\u2019s account or against cheques and not against cash payment. Further, the name of the purchaser shall be incorporated on the face of the demand draft, pay order, banker\u2019s cheque, etc., by the issuing bank.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "65",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy matches the regulatory requirement stated in Clause 65 for telegraphic transfers of Rs 50,000 and above, which must be debited from the customer's account and include the purchaser's name on the instrument. The policy's value of Rs 75,000 exceeds the threshold, making it subject to these regulations.",
+      "recommended_action": "No action needed, policy is compliant with the provided regulatory clauses.",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We obtain and verify PAN under Income Tax Rule 114B for all applicable banking transactions, and collect Form 60 from customers who don't have a PAN.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "66",
+      "notes": "Clause 66: PAN must be obtained/verified per Rule 114B; Form 60 required where PAN is unavailable."
+    },
+    "result": {
+      "policy_summary": "Obtaining and verifying PAN under Income Tax Rule 114B for all applicable banking transactions and collecting Form 60 from customers who don't have a PAN",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Quoting of PAN Permanent account number (PAN) or equivalent e-document thereof of customers shall be obtained and verified while undertaking transactions as per the provisions of Income Tax Rule 114B applicable to banks, as amended from time to time. Form 60 shall be obtained from persons who do not have PAN or equivalent e-document thereof.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "66",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy directly aligns with the requirement stated in Clause 66 of the RBI KYC Master Direction, which mandates obtaining and verifying PAN or equivalent e-document under Income Tax Rule 114B for banking transactions and requires Form 60 for those without a PAN.",
+      "recommended_action": "No action needed, as the policy complies with the regulatory requirement.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We never collect an account payee cheque on behalf of anyone other than the named payee.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "60",
+      "notes": "Clause 60: 'Account payee cheques for any person other than the payee constituent shall not be collected' (the co-op society carve-out is a separate optional exception this policy doesn't need)."
+    },
+    "result": {
+      "policy_summary": "The company never collects account payee cheques on behalf of anyone other than the named payee",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Account payee cheques for any person other than the payee constituent shall not be collected",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "60",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy directly aligns with Clause 60 of the rbi_kyc_master_direction, which explicitly states that account payee cheques should not be collected for anyone other than the payee constituent, supporting the policy's stance on not collecting such cheques for unauthorized parties",
+      "recommended_action": "No action needed as the policy is compliant with the regulatory clause",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "For an existing loan account where the customer hasn't submitted PAN or Form 60 by the notified deadline, we continue permitting credits into the account while suspending further debits, after giving the customer advance notice and a chance to be heard.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "39",
+      "notes": "Clause 39: asset/loan accounts continue allowing credits only, and the RE must give notice plus an opportunity to be heard before temporarily ceasing operations."
+    },
+    "result": {
+      "policy_summary": "Allowing credits into an existing loan account while suspending debits if the customer hasn't submitted PAN or Form 60 by the deadline",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "In case of asset accounts such as loan accounts, for the purpose of ceasing the operation in the account, only credits shall be allowed.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "39",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy allows credits into the account while suspending debits for existing loan accounts where the customer hasn't submitted PAN or Form 60, which aligns with the regulatory clause that permits only credits in such cases. However, the confidence level is not 1.0 due to the need to ensure all other regulatory requirements are also met, such as giving the customer advance notice and a chance to be heard, as well as considering any potential exceptions or additional requirements that may apply.",
+      "recommended_action": "Review the policy to ensure it fully aligns with all regulatory requirements, including notice and hearing procedures, and consider any necessary adjustments or additional measures to maintain compliance.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We continue operating a savings account for a customer whose name matches an individual on the UN Security Council's ISIL/Al-Qaida sanctions list, without freezing the account or reporting it.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "51",
+      "notes": "Clause 51(a)/(b): REs must not hold accounts for UNSC-listed individuals, and must report matches to FIU-IND/MHA."
+    },
+    "result": {
+      "policy_summary": "Operating a savings account for a customer matching an individual on the UN Security Council's ISIL/Al-Qaida sanctions list without freezing the account or reporting it",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "REs shall ensure that in terms of Section 51A of the Unlawful Activities (Prevention) (UAPA) Act, 1967 and amendments thereto, they do not have any account in the name of individuals/entities appearing in the lists of individuals and entities, suspected of having terrorist links, which are approved by and periodically circulated by the United Nations Security Council (UNSC).",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "51",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy directly violates the regulations outlined in Clause 51 of the rbi_kyc_master_direction, specifically the section that stipulates REs must not have any account in the name of individuals/entities on the UNSC sanctions lists. This policy allows for the continuation of account operations for a customer whose name matches an individual on such a list, which goes against the directive to prevent any account activity with individuals suspected of having terrorist links.",
+      "recommended_action": "Modify policy to comply with UNSC sanctions list requirements, including freezing accounts and reporting them to the appropriate authorities as stipulated in the clauses.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We sell a third-party insurance product to a walk-in customer for a cash payment of Rs 80,000, without verifying the customer's identity or obtaining their PAN.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "67",
+      "notes": "Clause 67(a)/(d): identity must be verified above Rs 50,000, and transactions of Rs 50,000+ must be by debit/cheque with PAN verification, not cash."
+    },
+    "result": {
+      "policy_summary": "Selling third-party insurance product to a walk-in customer for Rs 80,000 without verifying identity or obtaining PAN",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "transactions involving rupees fifty thousand and above shall be undertaken only by: debit to customers\u2019 account or against cheques; and obtaining and verifying the PAN given by the account-based as well as walk-in customers",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "67",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy involves a cash payment of Rs 80,000, which exceeds the threshold of Rs 50,000. According to Clause 67 of the RBI KYC Master Direction, transactions above Rs 50,000 require verification of the customer's identity and obtaining their PAN, which is not done in this policy. This clause specifically mentions that transactions involving Rs 50,000 and above shall be undertaken only by debit to customers' account or against cheques and by obtaining and verifying the PAN given by the account-based as well as walk-in customers.",
+      "recommended_action": "Modify the policy to verify the customer's identity and obtain their PAN for transactions above Rs 50,000, and consider alternative payment methods such as debit to customer's account or cheque",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We reject a Person with Disability's request to update their KYC because our branch staff found the extra accommodation inconvenient, and we don't record any reason for the rejection.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "11",
+      "notes": "Clause 11: CAP shall not deny facility to disadvantaged customers including PwDs; no application may be rejected without recording reasons."
+    },
+    "result": {
+      "policy_summary": "Rejecting a Person with Disability's KYC update request due to inconvenience, without recording a reason",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.5,
+      "evidence_quote": "Customer Acceptance Policy shall not result in denial of banking/financial facility to members of the general public, especially those, who are financially or socially disadvantaged, including the Persons with Disabilities (PwDs). No application for onboarding or periodic updation of KYC shall be rejected without application of mind. Reason(s) of rejection shall be duly recorded by the officer concerned.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "11",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy statement violates Clause 11, which explicitly requires that no application for KYC update shall be rejected without application of mind and that reasons of rejection shall be duly recorded. The provided policy rejects a Person with Disability's request without recording a reason, thus not complying with this requirement.",
+      "recommended_action": "Modify the policy to ensure that all rejections of KYC updates are made with application of mind and that reasons for rejection are recorded, especially for Persons with Disabilities.",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We open an account via Aadhaar OTP-based e-KYC after the customer verbally confirms consent on a recorded phone call, without a separate written or in-app consent record.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "17",
+      "notes": "Clause 17(i) requires 'specific consent... for authentication through OTP' but doesn't define the required form/medium of that consent -- genuine judgment call on whether a recorded verbal confirmation qualifies."
+    },
+    "result": {
+      "policy_summary": "Opening an account via Aadhaar OTP-based e-KYC with verbal consent on a recorded call without separate written or in-app consent",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "There must be a specific consent from the customer for authentication through OTP.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "17",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy lacks explicit mention of obtaining specific, possibly written, consent for OTP-based e-KYC authentication, as implied by Clause 17, which necessitates a clear consent for such authentication, suggesting a potential gap in compliance.",
+      "recommended_action": "Modify the policy to incorporate a clear, specific, and possibly written consent process for Aadhaar OTP-based e-KYC authentication.",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "Instead of automated alert software, we rely on a dedicated compliance team that manually reviews a random 20% sample of transactions each month for inconsistencies with customer risk profiles.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "50",
+      "notes": "Clause 50 requires 'robust software' throwing alerts on inconsistent transactions -- unclear whether a manual sampling process can satisfy this, or whether automated full-coverage alerting is mandatory."
+    },
+    "result": {
+      "policy_summary": "Manual review of 20% of transactions for inconsistencies with customer risk profiles",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "Robust software, throwing alerts when the transactions are inconsistent with risk categorization and updated profile of the customers shall be put in to use as a part of effective identification and reporting of suspicious transactions.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "50",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy relies on manual review by a dedicated compliance team, but Clause 50 explicitly requires the use of 'robust software' to throw alerts for inconsistent transactions. This indicates a preference for automated solutions over manual review, suggesting the policy does not fully comply with regulatory requirements.",
+      "recommended_action": "Consult legal and consider implementing automated alert software to supplement manual reviews",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We open a pooled account for a professional intermediary and rely entirely on the intermediary's own customer due diligence on its underlying clients, without independently confirming the intermediary has adequate KYC systems in place.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_kyc_master_direction",
+      "expected_clause_number": "42",
+      "notes": "Clause 42(e) allows RE discretion to rely on an intermediary's CDD only if the intermediary is regulated/supervised and has 'adequate systems'; 42(f) says ultimate responsibility stays with the RE. Genuine judgment call on how much independent verification 'reliance' requires."
+    },
+    "result": {
+      "policy_summary": "Opening a pooled account for a professional intermediary without independently confirming adequate KYC systems",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "The ultimate responsibility for knowing the customer lies with the RE",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "42",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy statement relies entirely on the intermediary's customer due diligence without ensuring the intermediary has adequate KYC systems in place, which contradicts the regulatory requirement that the ultimate responsibility for knowing the customer lies with the RE. Although Clause 42 allows REs to rely on CDD done by a regulated and supervised intermediary, it also emphasizes the RE's ultimate responsibility, suggesting a need for some level of verification or assurance that the intermediary's KYC systems are adequate.",
+      "recommended_action": "Modify policy to include procedures for verifying or ensuring the intermediary has adequate KYC systems in place",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We apply these interest-rate-on-advances directions to all our domestic branch operations, but not to our overseas branch operations.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "2",
+      "notes": "Clause 2: directions apply to Scheduled Commercial Banks etc., but 'shall not be applicable to operations of foreign branches of Indian banks.'"
+    },
+    "result": {
+      "policy_summary": "Interest-rate-on-advances policy applies to domestic branch operations, not overseas branches",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "These directions shall not be applicable to operations of foreign branches of Indian banks.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "2",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy statement excludes overseas branch operations from its interest-rate-on-advances directions, which aligns with the regulatory clause (rbi_interest_rate_advances) stating that the provisions do not apply to operations of foreign branches of Indian banks.",
+      "recommended_action": "No action needed",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We offer our advances customers a choice between fixed-rate and floating-rate pricing across all loan categories.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "4",
+      "notes": "Clause 4(a)(iii): 'Banks shall have the freedom to offer all categories of advances on fixed or floating interest rates.'"
+    },
+    "result": {
+      "policy_summary": "Offering customers a choice between fixed-rate and floating-rate pricing for loans",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.5,
+      "evidence_quote": "Banks shall have the freedom to offer all categories of advances on fixed or floating interest rates.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "4",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "According to Clause 4, banks are allowed to offer loans with either fixed or floating interest rates, which aligns with the policy statement. The clause explicitly mentions that banks have the freedom to offer all categories of advances on fixed or floating interest rates.",
+      "recommended_action": "No action needed, the policy is compliant with the regulatory clauses.",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "For our MCLR-linked floating rate loans, we let borrowers choose a reset date tied either to their first disbursement date or a designated review date.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "9",
+      "notes": "Clause 9(i)(a): banks may offer reset dates linked either to the first disbursement date or a review date."
+    },
+    "result": {
+      "policy_summary": "Allowing borrowers to choose a reset date for MCLR-linked floating rate loans tied to either the first disbursement date or a designated review date",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.5,
+      "evidence_quote": "Banks shall, at their option, specify interest reset dates on their floating rate loans. Banks shall have the option to offer loans with reset dates linked either to the date of first disbursement of the loan/credit limits or to the date of review of the Marginal Cost of Funds based Lending Rate (MCLR)",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "9",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy allows borrowers to choose between two reset dates for MCLR-linked floating rate loans, which aligns with the regulatory clause that gives banks the option to specify interest reset dates and link them to either the first disbursement date or the review date of the MCLR.",
+      "recommended_action": "No action needed, as the policy appears to comply with the regulatory requirements.",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We maintain two separate Base Rates -- one for retail customers and a lower one for corporate customers.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "6",
+      "notes": "Clause 6(a)(iii): 'There can be only one Base Rate for each bank.'"
+    },
+    "result": {
+      "policy_summary": "Maintaining separate base rates for retail and corporate customers",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.0,
+      "evidence_quote": "",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "54",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The provided clauses do not contain specific information regarding the maintenance of separate base rates for retail and corporate customers. The clauses appear to be references to guidelines on base rates, but the actual text of these guidelines is not provided, making it impossible to determine compliance with the policy statement.",
+      "recommended_action": "Consult legal to review the actual guidelines on base rates and determine if maintaining separate base rates for retail and corporate customers is compliant",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "When we take over a rural branch from another commercial bank, we immediately close the existing borrowers' loan accounts and require them to reapply for fresh loans, rather than letting them continue with either bank.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "4",
+      "notes": "Clause 4(a)(x): transfer of borrowal accounts on branch takeover must be on mutually agreed terms, with borrowers given the option to continue with the existing or acquiring bank, without disadvantage."
+    },
+    "result": {
+      "policy_summary": "Acquiring bank immediately closes existing borrowers' loan accounts and requires them to reapply",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Provided that the existing borrowers shall not be put into any disadvantage and shall have the option of continuing with the existing bank or the acquiring bank.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "4",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy statement does not align with the regulatory clause [Clause 4 \u2014 rbi_interest_rate_advances] which states that existing borrowers shall have the option to continue with the existing bank or the acquiring bank, thereby implying that they should not be put into any disadvantage, such as being required to reapply for new loans.",
+      "recommended_action": "Modify policy to provide existing borrowers with the option to continue with the existing bank or the acquiring bank, without requiring them to reapply for new loans.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We haven't reviewed our Base Rate in the last 18 months, and the current rate was never put before our Board or ALCO for approval.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "6",
+      "notes": "Clause 6(a)(v): Base Rate must be reviewed at least once a quarter with Board/ALCO approval."
+    },
+    "result": {
+      "policy_summary": "The Base Rate has not been reviewed in 18 months and has never been approved by the Board or ALCO.",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Banks shall review the Base Rate at least once in a quarter with the approval of the Board or the Asset Liability Management Committees (ALCOs) as per the bank\u2019s practice.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "6",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The given policy statement indicates that the Base Rate has not been reviewed for 18 months, which directly contradicts the regulatory requirement that the Base Rate should be reviewed at least once a quarter with the approval of the Board or ALCO. This indicates a clear non-compliance with the regulatory clause.",
+      "recommended_action": "Review and approve the Base Rate at least once a quarter with the approval of the Board or ALCO to bring the policy into compliance.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We charge a flat 24% interest rate on all personal loans under Rs 50,000, citing higher per-loan servicing costs, without documenting a specific cost-plus-return calculation for that loan segment.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "4",
+      "notes": "Clause 4(a)(ix) requires small-value loan interest to be 'justifiable having regard to the total cost incurred... and the extent of return that could be reasonably expected' -- a subjective standard; whether a flat rate without documented cost analysis satisfies it is a judgment call."
+    },
+    "result": {
+      "policy_summary": "Charging a flat 24% interest rate on personal loans under Rs 50,000 without documenting a specific cost-plus-return calculation",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.6,
+      "evidence_quote": "Interest charged on small value loans, particularly, personal loans and such other loans of similar nature shall be justifiable having regard to the total cost incurred by the bank in extending the loan and the extent of return that could be reasonably expected from the transaction.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "4",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy statement does not explicitly document a cost-plus-return calculation for the loan segment in question, which may be required by regulations to justify interest rates on small value loans. However, without further information on the cost structure and expected returns of the bank, it is difficult to determine compliance with certainty.",
+      "recommended_action": "Modify policy to include documentation of cost-plus-return calculation or consult with legal experts to ensure compliance with relevant regulations",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We calculate our cost of funds using a blended average that excludes our single costliest short-term borrowing tranche, on the grounds that it's atypical of our normal funding mix.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "6",
+      "notes": "Clause 6(a)(iv) allows any 'reasonable and transparent' cost-of-funds methodology, consistently applied -- whether excluding one funding tranche is reasonable or a way to understate costs is a judgment call."
+    },
+    "result": {
+      "policy_summary": "Calculating cost of funds using a blended average excluding the single costliest short-term borrowing tranche",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.6,
+      "evidence_quote": "Banks shall have the freedom to calculate cost of funds either on the basis of average cost of funds or on marginal cost of funds or any other methodology in vogue, which is reasonable and transparent, subject to it being consistent and made available for supervisory review/scrutiny as and when required.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "6",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy seems to use a methodology for calculating the cost of funds that is not explicitly addressed in the provided clauses. While Clause 6 mentions the freedom to use 'any other methodology in vogue, which is reasonable and transparent', it's unclear whether excluding the single costliest short-term borrowing tranche would be considered reasonable and transparent without further context or guidance from regulatory bodies.",
+      "recommended_action": "Consult with legal experts to ensure the methodology complies with regulatory requirements",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We raise a borrower's credit risk premium on their external-benchmark-linked loan after their credit score dipped for one billing cycle before recovering the following month.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "8",
+      "notes": "Clause 8(e): credit risk premium may change only when the borrower's credit assessment undergoes a 'substantial change' -- whether a one-month dip that then recovers counts as substantial is a judgment call."
+    },
+    "result": {
+      "policy_summary": "Raising a borrower's credit risk premium on their external-benchmark-linked loan after a one-month dip in credit score",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "credit risk premium may undergo change only when borrower\u2019s credit assessment undergoes a substantial change, as agreed upon in the loan contract.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "8",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy allows for an increase in credit risk premium based on a single month's deterioration in credit score, followed by a recovery. However, Clause 8(e) of the regulatory clauses indicates that the credit risk premium under External Benchmark may only change when the borrower's credit assessment undergoes a substantial change. A temporary dip in credit score may not necessarily constitute a substantial change, suggesting that the policy may not comply with the regulatory requirement.",
+      "recommended_action": "Modify the policy to align with the regulatory clause, ensuring that changes to credit risk premium are based on substantial changes in the borrower's credit assessment.",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We treat a personal loan to our company's Chief Financial Officer the same as our own-employee-advance exemption, without separately confirming whether the CEO/Whole-Time-Director carve-out or the general employee carve-out actually covers this role.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_interest_rate_advances",
+      "expected_clause_number": "13",
+      "notes": "Clause 13(d)(ii) exempts 'advances to banks' own employees' broadly, while 13(d)(iii) separately names only CEO/Whole-Time Directors -- whether a CFO qualifies as an 'employee' under (ii) is a genuine judgment call since (iii) doesn't name that role."
+    },
+    "result": {
+      "policy_summary": "Treating personal loans to the Chief Financial Officer the same as own-employee-advance exemption without separate confirmation of coverage",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.4,
+      "evidence_quote": "(iii) Advances granted to the Chief Executive Officer / Whole Time Directors.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "13",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The policy statement mentions treating a personal loan to the Chief Financial Officer the same as an own-employee-advance exemption. Clause 13 of the rbi_interest_rate_advances mentions exemptions for advances granted to the Chief Executive Officer / Whole Time Directors, but it is unclear if this specifically covers the Chief Financial Officer role without separate confirmation. The policy's approach may or may not align with the intent of the regulatory clause, requiring further legal review to determine compliance.",
+      "recommended_action": "Consult legal to determine if the Chief Financial Officer is implicitly covered under the exemption for Chief Executive Officer / Whole Time Directors and to clarify the policy's alignment with regulatory requirements.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We use a standard-form loan agreement for all our microfinance loans, written in a language our borrowers understand.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "7.1.2",
+      "notes": "Clause 7.1.2: 'There shall be a standard form of loan agreement for microfinance loans in a language understood by the borrower.'"
+    },
+    "result": {
+      "policy_summary": "Using standard-form loan agreements for microfinance loans in a language borrowers understand",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "There shall be a standard form of loan agreement for microfinance loans in a language understood by the borrower.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.1.2",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy directly aligns with Clause 7.1.2, which mandates the use of a standard form of loan agreement for microfinance loans in a language the borrower understands, thus fulfilling the regulatory requirement.",
+      "recommended_action": "No action needed, policy aligns with regulatory requirements.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We provide borrowers with the details of our recovery-related grievance redressal mechanism at the time of loan disbursal.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "7.4.4",
+      "notes": "Clause 7.4.4: dedicated recovery grievance mechanism, with details provided to the borrower at disbursal."
+    },
+    "result": {
+      "policy_summary": "Borrowers are given recovery-related grievance redressal mechanism details at loan disbursal",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "The details of this mechanism shall be provided to the borrower at the time of loan disbursal.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.4.4",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy matches the requirement stated in Clause 7.4.4, which mandates that the details of the recovery-related grievance redressal mechanism must be provided to the borrower at the time of loan disbursal.",
+      "recommended_action": "No action needed, policy appears to be compliant with regulatory requirements",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "When we recover a third-party insurance charge from a microfinance borrower on their behalf, we include it in the disclosed APR and give the borrower a receipt within a reasonable time.",
+      "category": "clear_compliant",
+      "expected_verdict": "Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "6A.5",
+      "notes": "Clause 6A.5: third-party charges recovered by the RE must form part of the disclosed APR, with receipts provided within a reasonable time."
+    },
+    "result": {
+      "policy_summary": "Inclusion of third-party insurance charges in APR and provision of receipts to borrowers",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Charges recovered from the borrowers by the REs on behalf of third-party service providers on actual basis, such as insurance charges, legal charges etc., shall also form part of the APR and shall be disclosed separately. In all cases wherever the RE is involved in recovering such charges, the receipts and related documents shall be provided to the borrower for each payment, within a reasonable time.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "6A.5",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy directly aligns with Clause 6A.5, which requires that charges like insurance charges be part of the APR and disclosed separately, and that receipts for these charges be provided to the borrower within a reasonable time.",
+      "recommended_action": "No action needed, policy appears to be compliant with the relevant regulatory clause.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We bundle a non-credit insurance product with a microfinance loan without obtaining the borrower's separate consent, and we don't disclose its fee anywhere in the loan card.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "7.1.5",
+      "notes": "Clause 7.1.5: non-credit products require the borrower's full consent and explicit fee disclosure in the loan card."
+    },
+    "result": {
+      "policy_summary": "Bundling non-credit insurance with microfinance loan without separate consent and not disclosing its fee",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Issuance of non-credit products shall be with full consent of the borrowers and fee structure for such products shall be explicitly communicated to the borrower in the loan card itself.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.1.5",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy statement directly contradicts Clause 7.1.5, which requires full consent from borrowers for non-credit products and explicit communication of the fee structure in the loan card. Since the policy does not obtain separate consent and does not disclose the fee, it does not comply with the regulatory requirement.",
+      "recommended_action": "Modify policy to obtain separate consent for non-credit insurance and disclose its fee in the loan card.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "Our NBFC-MFI has held only 45% of its total assets as qualifying microfinance assets for the past six consecutive quarters, and we haven't approached RBI with a remediation plan.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "8.1",
+      "notes": "Clause 8.1: qualifying assets must be at least 60% of total assets on an ongoing basis; failing this for four-plus consecutive quarters requires approaching RBI with a remediation plan."
+    },
+    "result": {
+      "policy_summary": "NBFC-MFI holding 45% of total assets as qualifying microfinance assets for six quarters without a remediation plan",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.5,
+      "evidence_quote": "Qualifying assets of NBFC-MFIs shall constitute a minimum of 60 percent of the total assets (netted off by intangible assets), w on an ongoing basis. If an NBFC-MFI fails to maaintain the qualifying assets as aforesaid r d for four consecutive quarters, it shall approach the Reserve Bank with a remediation plan",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "8.1",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy states that the NBFC-MFI has held only 45% of its total assets as qualifying microfinance assets for six consecutive quarters, which is below the minimum requirement of 60%. Furthermore, the NBFC-MFI has not approached the RBI with a remediation plan, despite failing to meet the requirement for more than four consecutive quarters as mandated by the regulatory clause.",
+      "recommended_action": "Develop and submit a remediation plan to the Reserve Bank as required by the regulatory clause",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We classify a Rs 2 lakh collateral-free loan to a household earning Rs 5,00,000 a year as a 'microfinance loan' under these directions.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "3.2",
+      "notes": "Clause 3.2 (with 3.1): only collateral-free loans to households with annual income up to Rs 3,00,000 qualify as microfinance loans -- this household exceeds that threshold."
+    },
+    "result": {
+      "policy_summary": "Classifying Rs 2 lakh collateral-free loan to a household earning Rs 5,00,000 a year as a 'microfinance loan'",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "A microfinance loan is defined as a collateral-free loan given to a household having annual household income up to \u20b93,00,000.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "3.1",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy classifies a loan to a household with an annual income of Rs 5,00,000 as a microfinance loan, but the regulatory clauses define microfinance loans as those given to households with annual incomes up to \u20b93,00,000. This discrepancy suggests that the policy does not align with the regulatory definition.",
+      "recommended_action": "Modify policy to align with regulatory definition of microfinance loans",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "Our recovery agent's authorization letter to the borrower lists the recovery agency's contact details, but includes no contact information for us as the lending RE.",
+      "category": "clear_noncompliant",
+      "expected_verdict": "Non-Compliant",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "7.5.4",
+      "notes": "Clause 7.5.4: the notice/authorization letter must include contact details of both the recovery agency AND the RE."
+    },
+    "result": {
+      "policy_summary": "Lending RE's recovery agent authorization letter omits RE contact details",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "The notice and the authorization letter shall, among other details, also include the contact details of the recovery agency and the RE.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.5.4",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The provided regulatory clause (7.5.4) explicitly states that both the recovery agency's and the RE's contact details should be included in the authorization letter. Since the policy statement indicates that the RE's contact details are not included, it contradicts this requirement.",
+      "recommended_action": "Modify the policy to include the lending RE's contact information in the recovery agent's authorization letter",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "Instead of using RBI's indicative household-income-assessment methodology or an SRO-developed framework, we assess household income using our own proprietary in-house scoring model, approved by our Board.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "4.1",
+      "notes": "Clause 4.1 requires a board-approved income-assessment policy and points to an indicative methodology; 4.2 says REs 'may adopt/modify' the SRO framework 'suitably as per their requirements' -- whether a fully independent proprietary model still satisfies the intent is a judgment call."
+    },
+    "result": {
+      "policy_summary": "household income assessment using a proprietary in-house scoring model approved by the Board",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.4,
+      "evidence_quote": "Each RE shall put in place a board-ap dproved policy for assessment of household h income.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "4.1",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The evidence quote indicates that the Board must approve the policy for household income assessment. However, it does not explicitly state whether using a proprietary in-house scoring model is compliant or not, as Clauses 4.1 and 4.2 provide alternative approaches. The indicative methodology and SRO-developed framework are mentioned, but it is unclear if using a proprietary model is allowed as long as it is Board-approved.",
+      "recommended_action": "consult legal to clarify whether the proprietary in-house scoring model complies with the RBI microfinance fair practices guidelines",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "Our not-for-profit company engaged in microfinance activities has assets fluctuating between Rs 99 and Rs 101 crore depending on valuation date, and we're uncertain whether we still qualify for the Sections 45-IA/IB/IC exemptions.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "9.2",
+      "notes": "Clause 9.2: the Rs 100 crore asset-size exemption-withdrawal threshold is a hard cutoff, but this case sits right on the boundary depending on valuation timing -- a genuine judgment call on which measurement date/method governs."
+    },
+    "result": {
+      "policy_summary": "Not-for-profit microfinance company with assets around Rs 100 crore seeking Section 45-IA/IB/IC exemptions",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.8,
+      "evidence_quote": "Exemptions from Sections 45-IA4, 45-IB5 and 45-IC6 of the RBI Act, 1934 have been withdrawn for those \u2018not for profit\u2019 companies engaged in microfinance activities that have asset size of \u20b9100 crore and above.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "9.2",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy statement mentions that the company's assets fluctuate between Rs 99 and Rs 101 crore. Given that the exemption is withdrawn for companies with an asset size of \u20b9100 crore and above, it's likely that the company would exceed this threshold at times, thus being non-compliant. However, the fluctuation in assets introduces some uncertainty.",
+      "recommended_action": "Consult legal to review asset size fluctuations and determine compliance",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.80 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "row": {
+      "policy_text": "We extend microfinance loans to households whose monthly loan obligations sit right at the 50% income cap, based on the household's self-reported income figures, which we haven't independently verified.",
+      "category": "ambiguous",
+      "expected_verdict": "",
+      "expected_document": "rbi_microfinance_fair_practices",
+      "expected_clause_number": "9.1",
+      "notes": "Clause 9.1 caps obligations at 50% of monthly household income but doesn't itself mandate independent income verification for this specific cap (verification/CIC-reporting duties are addressed elsewhere) -- whether relying on unverified self-reported income at the exact boundary is adequate is a judgment call."
+    },
+    "result": {
+      "policy_summary": "Microfinance loans extended to households with monthly loan obligations at 50% income cap based on self-reported income",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.4,
+      "evidence_quote": "The computation of loan repayment obligations shall take into account all outstanding loans (collateral-free microfinance loans as well as any other type of collateralized loans) of the household.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "5.2",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy statement does not clearly address whether all outstanding loans are considered when determining the 50% income cap, and it relies on self-reported income figures, which may not be independently verified as typically expected in financial assessments. The clauses emphasize considering all loans and repayment obligations, suggesting a comprehensive approach, but do not explicitly address the use of self-reported income or the specific scenario of loan obligations exactly at the 50% cap.",
+      "recommended_action": "Consult legal to clarify interpretation of 'household income' and verification requirements for income figures, and review policy for comprehensive consideration of all loan obligations.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  }
+]

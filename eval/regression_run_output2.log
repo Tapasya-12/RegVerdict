@@ -1,0 +1,498 @@
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_kyc_mas...ive_date': '2016-02-25'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[1/30] Running: For a telegraphic transfer of Rs 75,000, we debit the customer's accou...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[2/30] Running: We obtain and verify PAN under Income Tax Rule 114B for all applicable...
+[3/30] Running: We never collect an account payee cheque on behalf of anyone other tha...
+[4/30] Running: For an existing loan account where the customer hasn't submitted PAN o...
+[5/30] Running: We continue operating a savings account for a customer whose name matc...
+[6/30] Running: We sell a third-party insurance product to a walk-in customer for a ca...
+[7/30] Running: We reject a Person with Disability's request to update their KYC becau...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 98029, Requested 4404. Please try again in 35m2.112s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 1 at Sun Jul 12 13:18:02 UTC 2026 ===
+[INFO] Resuming from checkpoint — 6/30 cases already completed, skipping those.
+[7/30] Running: We reject a Person with Disability's request to update their KYC becau...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97972, Requested 4404. Please try again in 34m12.864s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 1 failed (exit 1), sleeping 1500s ===
+=== Attempt 2 at Sun Jul 12 13:43:29 UTC 2026 ===
+[INFO] Resuming from checkpoint — 6/30 cases already completed, skipping those.
+[7/30] Running: We reject a Person with Disability's request to update their KYC becau...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 96204, Requested 5209. Please try again in 20m20.832s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 2 failed (exit 1), sleeping 1500s ===
+=== Attempt 3 at Sun Jul 12 17:56:15 UTC 2026 ===
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_kyc_mas...ive_date': '2016-02-25'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 6/30 cases already completed, skipping those.
+[7/30] Running: We reject a Person with Disability's request to update their KYC becau...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+[9/30] Running: Instead of automated alert software, we rely on a dedicated compliance...
+[10/30] Running: We open a pooled account for a professional intermediary and rely enti...
+[11/30] Running: We apply these interest-rate-on-advances directions to all our domesti...
+[12/30] Running: We offer our advances customers a choice between fixed-rate and floati...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 96561, Requested 4075. Please try again in 9m9.504s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 3 failed (exit 1), sleeping 1500s ===
+=== Attempt 4 at Sun Jul 12 18:22:20 UTC 2026 ===
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 11/30 cases already completed, skipping those.
+[12/30] Running: We offer our advances customers a choice between fixed-rate and floati...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[13/30] Running: For our MCLR-linked floating rate loans, we let borrowers choose a res...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99830, Requested 3623. Please try again in 49m43.392s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 4 failed (exit 1), sleeping 1500s ===
+=== Attempt 5 at Sun Jul 12 18:59:21 UTC 2026 ===
+[INFO] Resuming from checkpoint — 12/30 cases already completed, skipping those.
+[13/30] Running: For our MCLR-linked floating rate loans, we let borrowers choose a res...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97260, Requested 4502. Please try again in 25m22.368s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 5 failed (exit 1), sleeping 1500s ===
+=== Attempt 6 at Sun Jul 12 19:24:48 UTC 2026 ===
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 12/30 cases already completed, skipping those.
+[13/30] Running: For our MCLR-linked floating rate loans, we let borrowers choose a res...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[14/30] Running: We maintain two separate Base Rates -- one for retail customers and a ...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99997, Requested 3375. Please try again in 48m33.408s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 6 failed (exit 1), sleeping 1500s ===
+=== Attempt 7 at Sun Jul 12 20:05:40 UTC 2026 ===
+[INFO] Resuming from checkpoint — 13/30 cases already completed, skipping those.
+[14/30] Running: We maintain two separate Base Rates -- one for retail customers and a ...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97163, Requested 3375. Please try again in 7m44.832s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 7 failed (exit 1), sleeping 1500s ===
+=== Attempt 8 at Sun Jul 12 20:31:07 UTC 2026 ===
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 13/30 cases already completed, skipping those.
+[14/30] Running: We maintain two separate Base Rates -- one for retail customers and a ...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[15/30] Running: When we take over a rural branch from another commercial bank, we imme...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 98905, Requested 2787. Please try again in 24m21.888s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 8 failed (exit 1), sleeping 1500s ===
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_microfi...ive_date': '2022-03-14'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 14/30 cases already completed, skipping those.
+[15/30] Running: When we take over a rural branch from another commercial bank, we imme...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+[16/30] Running: We haven't reviewed our Base Rate in the last 18 months, and the curre...
+[17/30] Running: We charge a flat 24% interest rate on all personal loans under Rs 50,0...
+[18/30] Running: We calculate our cost of funds using a blended average that excludes o...
+[19/30] Running: We raise a borrower's credit risk premium on their external-benchmark-...
+[20/30] Running: We treat a personal loan to our company's Chief Financial Officer the ...
+[21/30] Running: We use a standard-form loan agreement for all our microfinance loans, ...
+[22/30] Running: We provide borrowers with the details of our recovery-related grievanc...
+[23/30] Running: When we recover a third-party insurance charge from a microfinance bor...
+[24/30] Running: We bundle a non-credit insurance product with a microfinance loan with...
+[25/30] Running: Our NBFC-MFI has held only 45% of its total assets as qualifying micro...
+[26/30] Running: We classify a Rs 2 lakh collateral-free loan to a household earning Rs...
+[27/30] Running: Our recovery agent's authorization letter to the borrower lists the re...
+[28/30] Running: Instead of using RBI's indicative household-income-assessment methodol...
+[29/30] Running: Our not-for-profit company engaged in microfinance activities has asse...
+[30/30] Running: We extend microfinance loans to households whose monthly loan obligati...
+
+[INFO] All cases completed. Scoring ...
+
+=== Regression Set Results (30 cases) ===
+
+Verdict accuracy (clear cases only): 17/20 (85.0%)
+
+Dangerous ungrounded verdicts (confidence >= 0.7, NOT grounded, NOT a known data artifact): 0
+Exit criterion: this number must be 0 — PASS
+
+Full results (including all ambiguous-case reasoning) saved to C:\RegVerdict\eval\regression_results.json
+Review the 'ambiguous' category rows manually — no automated check can grade whether the REASONING for a genuinely ambiguous case is sound.

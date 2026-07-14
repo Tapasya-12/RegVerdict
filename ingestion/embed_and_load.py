@@ -15,7 +15,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 
 from config import (
     QDRANT_LOCAL_PATH, COLLECTION_NAME, EMBED_MODEL_NAME, EMBED_DIM, BASE_DIR,
-    build_chunk_id,
+    build_chunk_id, is_stub_chunk,
 )
 from parse_pdf import parse_all_pdfs
 from clause_chunker import chunk_pages_by_clause
@@ -49,6 +49,7 @@ def build_chunk_records(manifest: dict) -> list[dict]:
     all_pages = parse_all_pdfs()
     records = []
     seen_chunk_id_counts: dict[str, int] = {}
+    stub_counts: dict[str, int] = {}
 
     for doc_name, pages in all_pages.items():
         if doc_name not in manifest:
@@ -60,6 +61,10 @@ def build_chunk_records(manifest: dict) -> list[dict]:
         chunks = chunk_pages_by_clause(pages)
 
         for chunk in chunks:
+            if is_stub_chunk(chunk["text"]):
+                stub_counts[doc_name] = stub_counts.get(doc_name, 0) + 1
+                continue
+
             chunk_id = build_chunk_id(doc_name, chunk["parent_section"], chunk["clause_number"], chunk["source_page"])
             # Safety net: even (document, section, clause, page) can coincide
             # when a source document itself reuses a label twice on one page.
@@ -84,6 +89,13 @@ def build_chunk_records(manifest: dict) -> list[dict]:
                 "source_page": chunk["source_page"],
                 "text": chunk["text"],
             })
+
+    if stub_counts:
+        total_stubs = sum(stub_counts.values())
+        print(f"[INFO] Filtered {total_stubs} near-empty stub chunks before embedding "
+              f"(circular-citation bibliography entries / 'Deleted' placeholders):")
+        for doc_name, count in stub_counts.items():
+            print(f"  {doc_name}: {count}")
 
     return records
 

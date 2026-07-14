@@ -94,8 +94,8 @@ def check_compliance(policy_text: str) -> dict:
             "grounding_verified": False,
         }
 
-    verdict_output, top_chunk = generate_verdict(policy_text, chunks)
-    apply_grounding_check(verdict_output, top_chunk.get("text", ""))
+    verdict_output = generate_verdict(policy_text, chunks)
+    apply_grounding_check(verdict_output, chunks)
 
     return verdict_output.model_dump()
 
@@ -157,8 +157,8 @@ def compare_jurisdictions(policy_text: str, regulators: list[str]) -> dict:
             }
             continue
 
-        verdict_output, top_chunk = generate_verdict(policy_text, regulator_chunks)
-        apply_grounding_check(verdict_output, top_chunk.get("text", ""))
+        verdict_output = generate_verdict(policy_text, regulator_chunks)
+        apply_grounding_check(verdict_output, regulator_chunks)
         results[regulator] = verdict_output.model_dump()
 
     return {"policy_text": policy_text, "results_by_regulator": results}

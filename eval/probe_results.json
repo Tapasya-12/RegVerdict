@@ -1,0 +1,244 @@
+[
+  {
+    "case": {
+      "label": "clear_compliant_1",
+      "policy": "We retain customer KYC identification records for five years after the account relationship ends.",
+      "expected_direction": "Compliant"
+    },
+    "result": {
+      "policy_summary": "Customer KYC identification records are retained for five years after the account relationship ends",
+      "verdict": "Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "preserve the records pertaining to the identification of the customers and their addresses obtained while opening the account and during the course of business relationship, for at least five years after the business relationship is ended;",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "46",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy is consistent with the regulatory requirement specified in Clause 46, which mandates preserving customer identification records for at least five years after the business relationship has ended.",
+      "recommended_action": "No action needed, as the policy aligns with the regulatory requirement.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "clear_compliant_2",
+      "policy": "We do not charge any pre-payment penalty when a microfinance borrower repays their loan early.",
+      "expected_direction": "Compliant"
+    },
+    "result": {
+      "policy_summary": "No pre-payment penalty for microfinance loan early repayment",
+      "verdict": "Compliant",
+      "confidence": 1.0,
+      "evidence_quote": "There shall be no pre-payment penalty on microfinance loans.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "6.6",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy statement aligns with Clause 6.6 of the regulatory guidelines, which explicitly states that there shall be no pre-payment penalty on microfinance loans.",
+      "recommended_action": "No action needed",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "clear_noncompliant_1",
+      "policy": "We open savings accounts for customers who want to use a made-up name instead of their real identity.",
+      "expected_direction": "Non-Compliant"
+    },
+    "result": {
+      "policy_summary": "Opening savings accounts for customers using made-up names instead of real identities",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "No account is opened in anonymous or fictitious/benami name.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "10",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy statement directly contradicts the requirement stated in Clause 10 of the rbi_kyc_master_direction, which explicitly prohibits opening accounts in anonymous or fictitious/benami names. This clause clearly outlines the necessity for accurate customer identification, making the policy non-compliant.",
+      "recommended_action": "Modify the policy to require the use of real identities for opening savings accounts, ensuring compliance with the KYC regulations.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "clear_noncompliant_2",
+      "policy": "We link a microfinance loan to a lien on the borrower's savings account as collateral.",
+      "expected_direction": "Non-Compliant"
+    },
+    "result": {
+      "policy_summary": "Linking microfinance loans to a lien on the borrower's savings account as collateral",
+      "verdict": "Non-Compliant",
+      "confidence": 1.0,
+      "evidence_quote": "To ensure collateral-free nature of the microfinance loan, the loan shall not be linked with a lien on the deposit account of the borrower.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "3.3",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy directly contradicts Clause 3.3, which explicitly states that a microfinance loan should not be linked with a lien on the borrower's deposit account to maintain its collateral-free nature.",
+      "recommended_action": "Modify the policy to comply with the collateral-free requirement of microfinance loans.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "clear_noncompliant_3",
+      "policy": "Our recovery agents call defaulting microfinance borrowers at 5:30 a.m. to press for payment.",
+      "expected_direction": "Non-Compliant"
+    },
+    "result": {
+      "policy_summary": "Recovery agents call defaulting microfinance borrowers at 5:30 a.m. for payment",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "(ii) Persistently calling the borrower and/ or calling the borrower before 9:00 a.m. and after 6:00 p.m.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.4.3",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy allows recovery agents to call borrowers at 5:30 a.m., which is before the 9:00 a.m. threshold specified in Clause 7.4.3 as a harsh method of recovery. This directly contradicts the regulatory clause, indicating that the policy is non-compliant.",
+      "recommended_action": "Modify the policy to ensure recovery agents do not call borrowers before 9:00 a.m. or after 6:00 p.m. to align with regulatory requirements",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "ambiguous_1",
+      "policy": "We increase a microfinance borrower's effective rate mid-term by adding a new processing fee, without prior notice, because our funding costs rose.",
+      "expected_direction": "ambiguous \u2014 touches both 'prospective only' and 'usurious/disclosure' rules, could be Non-Compliant OR flagged for multiple reasons"
+    },
+    "result": {
+      "policy_summary": "Increasing microfinance borrower's effective rate mid-term by adding a new processing fee without prior notice due to risen funding costs",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.7,
+      "evidence_quote": "Interest rates and other charges/ fees on microfinance loans should not be usurious",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "6.2",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy of adding a new processing fee mid-term without notice due to increased funding costs may be considered usurious, as it increases the borrower's effective rate without their prior agreement, potentially violating Clause 6.2. However, the term 'usurious' is somewhat subjective and may require further interpretation, hence the moderate confidence level.",
+      "recommended_action": "Consult legal to assess potential usury and review Clause 6.1 for proper interest rate model and component delineation to ensure compliance",
+      "grounding_verified": true,
+      "grounding_note": "Confidence 0.70 is below the 0.9 auto-downgrade threshold."
+    }
+  },
+  {
+    "case": {
+      "label": "ambiguous_2",
+      "policy": "We classify a customer as low-risk for KYC purposes based solely on their income level, without considering any other factors.",
+      "expected_direction": "ambiguous \u2014 policy doesn't fully specify all required risk factors, tests whether the model over- or under-claims compliance"
+    },
+    "result": {
+      "policy_summary": "Classify customers as low-risk based solely on their income level for KYC purposes",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "Risk categorisation shall be undertaken based on parameters such as customer\u2019s identity, social/financial status, nature of business activity, and information about the customer\u2019s business and their location, geographical risk covering customers as well as transactions, type of products/services offered, delivery channel used for delivery of products/services, types of transaction undertaken",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "12",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy statement only considers income level for risk categorization, whereas the regulatory clause requires consideration of multiple parameters, including customer identity, social/financial status, nature of business activity, and more. This suggests that the policy does not align with the regulatory requirements, hence it is non-compliant.",
+      "recommended_action": "Modify the policy to include multiple parameters for risk categorization as per the regulatory requirements",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "ambiguous_3",
+      "policy": "We want to offer a slightly discounted interest rate to employees who refer new personal loan customers to us.",
+      "expected_direction": "ambiguous \u2014 not directly addressed by any single clause, tests empty/weak-match handling"
+    },
+    "result": {
+      "policy_summary": "Offering a discounted interest rate to employees who refer new personal loan customers",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.5,
+      "evidence_quote": "There shall be no lending below the benchmark rate for a particular maturity for all loans linked to that benchmark.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "7",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "While the policy aims to offer a discounted interest rate, Clause 4(a)(xi) restricts lending below the benchmark rate for a particular maturity. However, the policy statement does not specify whether the loan is linked to an external benchmark or an internal benchmark, which affects the applicability of this clause. Additionally, Clause 13(d)(ii) exempts advances to banks' own employees from certain provisions, but it is unclear if this exemption applies to the benchmark rate restriction. Therefore, a thorough review of the relevant clauses and the specific loan terms is necessary to determine compliance.",
+      "recommended_action": "Consult legal to review the policy against the relevant regulatory clauses and determine the applicability of the benchmark rate restriction to employee referrals",
+      "grounding_verified": false,
+      "grounding_note": "Evidence quote could not be verified verbatim against any of the retrieved source chunks. Auto-downgraded \u2014 do not trust this verdict without manual review of the source clause."
+    }
+  },
+  {
+    "case": {
+      "label": "cross_doc_1",
+      "policy": "We change the interest rate on an existing floating-rate personal loan and apply the new rate retroactively to instalments already due.",
+      "expected_direction": "Non-Compliant \u2014 relevant clause could plausibly live in EITHER rbi_interest_rate_advances or rbi_microfinance_fair_practices depending on loan type; tests whether retrieval picks a sensible one"
+    },
+    "result": {
+      "policy_summary": "Changing interest rate on existing floating-rate personal loan and applying new rate retroactively to instalments already due",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.4,
+      "evidence_quote": "The final rate charged to this category of borrowers, post switchover to external benchmark, shall be same as the rate charged for a new loan of the same category, type, tenor and amount, at the time of origination of the loan.",
+      "source_clause": {
+        "document": "rbi_interest_rate_advances",
+        "clause_number": "11",
+        "effective_date": "2016-03-03"
+      },
+      "reasoning": "The provided clauses discuss the transition to external benchmarks and the reset of interest rates, but they do not explicitly address the retroactive application of a new interest rate to existing instalments. The evidence quote suggests that the final rate charged after a switchover should be the same as for a new loan, but it does not clarify whether this applies to retroactive changes. Therefore, the policy's compliance with the regulatory clauses is uncertain and requires legal review.",
+      "recommended_action": "Consult legal experts to determine the policy's compliance with the regulatory clauses and to clarify the interpretation of the clauses regarding retroactive interest rate changes.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "cross_doc_2",
+      "policy": "We outsource our loan recovery process to a third-party agency and take the position that any mishandling is the agency's liability, not ours.",
+      "expected_direction": "Non-Compliant \u2014 this was a known Phase 2 retrieval miss (clause 7.3.1), worth re-checking now that reranking is wired in"
+    },
+    "result": {
+      "policy_summary": "Outsourcing loan recovery to a third-party agency and attributing mishandling liability to the agency",
+      "verdict": "Non-Compliant",
+      "confidence": 0.9,
+      "evidence_quote": "A declaration that the RE shall be accountable for inappropriate behaviour by its employees or employees of the outsourced agency and shall provide timely grievance redressal, shall be made in the loan agreement and also in the FPC displayed in its office/ branch premises/ website.",
+      "source_clause": {
+        "document": "rbi_microfinance_fair_practices",
+        "clause_number": "7.3.2",
+        "effective_date": "2022-03-14"
+      },
+      "reasoning": "The policy statement suggests that the company does not take liability for the third-party agency's actions, which contradicts the regulatory requirement stated in Clause 7.3.2. This clause explicitly states that the regulated entity (RE) shall be accountable for inappropriate behavior by employees of the outsourced agency, indicating that the liability for mishandling does indeed rest with the RE, not the third-party agency.",
+      "recommended_action": "Modify the policy to reflect the RE's accountability for the actions of the outsourced agency and ensure compliance with Clause 7.3.2 by including a declaration of accountability in loan agreements and the Financial Promotion Code (FPC).",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  },
+  {
+    "case": {
+      "label": "out_of_corpus",
+      "policy": "We want to launch a new cryptocurrency staking product for retail customers.",
+      "expected_direction": "not covered by current corpus \u2014 should gracefully return Requires Legal Review, not fabricate a verdict"
+    },
+    "result": {
+      "policy_summary": "Launching a new cryptocurrency staking product for retail customers",
+      "verdict": "Requires Legal Review",
+      "confidence": 0.6,
+      "evidence_quote": "REs shall identify and assess the ML/TF risks that may arise in relation to the development of new products and new business practices, including new delivery mechanisms, and the use of new or developing technologies for both new and pre-existing products.",
+      "source_clause": {
+        "document": "rbi_kyc_master_direction",
+        "clause_number": "62",
+        "effective_date": "2016-02-25"
+      },
+      "reasoning": "The policy involves introducing a new cryptocurrency staking product, which may be considered a new product or business practice. Clause 62 requires REs to assess ML/TF risks prior to launch, but it is unclear if this specifically applies to cryptocurrency products. Additional review is needed to determine if the policy complies with this clause and other relevant regulations.",
+      "recommended_action": "Consult with legal experts to assess ML/TF risks and ensure compliance with relevant regulations, such as Clause 62 and other applicable laws and guidelines.",
+      "grounding_verified": true,
+      "grounding_note": "Evidence quote verified verbatim against source chunk."
+    }
+  }
+]

@@ -5,6 +5,7 @@ hard-coded twice across parse_pdf.py, clause_chunker.py, embed_and_load.py.
 """
 
 import os
+import re
 from pathlib import Path
 
 # --- Paths ---
@@ -88,3 +89,32 @@ def build_chunk_id(document_name: str, parent_section: str, clause_number: str, 
 # and should gate matches by indentation (see HEADER_INDENT_TOLERANCE there) —
 # nested sub-list items inside clause bodies reuse this same "N. " format.
 CLAUSE_HEADER_REGEX = r"^(?:Para\s+)?(?:(\d{1,3}[A-Z]?(?:\.\d{1,3}){1,3})\.?|(\d{1,3}[A-Z]?)\.)\s+"
+
+
+# --- Near-empty "stub" chunk detection ---
+# Some source documents (e.g. rbi_interest_rate_advances) include an
+# appendix/bibliography listing every circular ever superseded, numbered in
+# the SAME sequence as the real substantive clauses (clause numbers 1-61
+# there mix real rules with circular-index entries). These stub chunks are
+# just a circular reference + a date, with zero rule content, e.g.:
+#   "DBOD.No.Dir.BC.141/13.07.01-94   07.12.1994 Interest Rates on Advances"
+#   "Mail Box clarification          27.04.2012 Guidelines on Base Rate"
+# Confirmed via Phase 4 investigation into a real retrieval miss (a query
+# about the Base Rate returned one of these stubs instead of the actual
+# substantive clause). Deliberately NOT a word-count filter — this corpus
+# has genuine one-sentence rules as short as 7 words (e.g. "REs shall frame
+# a Customer Acceptance Policy."), so length alone can't separate the two;
+# only the citation/deletion-marker shape can.
+CIRCULAR_STUB_REGEX = re.compile(
+    r"^\s*(DBOD|DBR|IECD|Mail\s?Box|Letter to IBA)\b.*\d{2}[.:]\d{2}[.:]\d{2,4}",
+    re.IGNORECASE,
+)
+DELETED_STUB_REGEX = re.compile(r"^\s*\d{0,4}\s*Deleted\.?\d*\s*$", re.IGNORECASE)
+
+
+def is_stub_chunk(text: str) -> bool:
+    """True for circular-citation bibliography entries or bare 'Deleted'
+    placeholders — chunks with zero rule content that should never enter
+    the corpus. Called at chunk-build time, before embedding."""
+    stripped = text.strip()
+    return bool(CIRCULAR_STUB_REGEX.match(stripped) or DELETED_STUB_REGEX.match(stripped))

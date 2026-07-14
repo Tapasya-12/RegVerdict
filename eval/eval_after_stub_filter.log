@@ -1,0 +1,23 @@
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 261 chunks indexed for BM25 + dense search.
+
+=== Recall@5: 0.925 (49/53) ===
+Exit criterion (roadmap Phase 2): Recall@5 >= 0.85 — PASS
+
+--- 4 misses (debug these first) ---
+
+Query: If we raise the interest rate on a microfinance loan, does the new rate apply retroactively to instalments already due?
+  Expected: rbi_microfinance_fair_practices / 6.8
+  Got docs: ['rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices']
+
+Query: Do we need to give a microfinance applicant a Key Facts Statement before they sign the loan agreement?
+  Expected: rbi_microfinance_fair_practices / 6A.2
+  Got docs: ['rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices']
+
+Query: If we outsource loan recovery to a third-party agency and they mishandle a case, are we still liable for it?
+  Expected: rbi_microfinance_fair_practices / 7.3.1
+  Got docs: ['rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices']
+
+Query: Do we need to run background checks on a recovery agency's field staff before deploying them to collect on microfinance loans?
+  Expected: rbi_microfinance_fair_practices / 7.5.2
+  Got docs: ['rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices', 'rbi_microfinance_fair_practices']
