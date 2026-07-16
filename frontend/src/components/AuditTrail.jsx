@@ -22,7 +22,25 @@ function truncate(text, max = 80) {
   return text.length > max ? text.slice(0, max).trimEnd() + "…" : text;
 }
 
-const CSV_COLUMNS = ["timestamp", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
+// simulate_policy_change logs a compound "Before → After" verdict string
+// (there's no single clause/verdict to badge — that's the whole point of a
+// diff). Render it as two small badges either side of an arrow instead of
+// forcing it through the single-verdict badge path.
+function VerdictCell({ verdict }) {
+  if (verdict && verdict.includes(" → ")) {
+    const [before, after] = verdict.split(" → ");
+    return (
+      <span className="verdict-diff">
+        <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[before] || "review"}`}>{before}</span>
+        <span className="verdict-diff-arrow">→</span>
+        <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[after] || "review"}`}>{after}</span>
+      </span>
+    );
+  }
+  return <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[verdict] || "review"}`}>{verdict}</span>;
+}
+
+const CSV_COLUMNS = ["timestamp", "tool", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
 
 function toCSV(rows) {
   const escape = (value) => {
@@ -144,6 +162,7 @@ export default function AuditTrail() {
             <thead>
               <tr>
                 <th>Timestamp</th>
+                <th>Tool</th>
                 <th>Policy</th>
                 <th>Verdict</th>
                 <th>Clause</th>
@@ -154,11 +173,10 @@ export default function AuditTrail() {
               {records.map((r) => (
                 <tr key={r.id}>
                   <td className="audit-mono">{formatTimestamp(r.timestamp)}</td>
+                  <td className="audit-mono">{r.tool || "—"}</td>
                   <td title={r.policy_text}>{truncate(r.policy_text)}</td>
                   <td>
-                    <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[r.verdict] || "review"}`}>
-                      {r.verdict}
-                    </span>
+                    <VerdictCell verdict={r.verdict} />
                   </td>
                   <td className="audit-mono">
                     {r.document_name ? `${r.document_name} §${r.clause_number}` : "—"}

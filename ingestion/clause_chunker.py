@@ -13,9 +13,10 @@ Strategy (per design doc 2.2 and roadmap Phase 1):
 """
 
 import re
-from config import CLAUSE_HEADER_REGEX, TRAILING_CHROME_MARKERS
+from config import CLAUSE_HEADER_REGEX, ARTICLE_HEADER_REGEX, TRAILING_CHROME_MARKERS
 
-HEADER_RE = re.compile(CLAUSE_HEADER_REGEX)
+DECIMAL_HEADER_RE = re.compile(CLAUSE_HEADER_REGEX)
+ARTICLE_HEADER_RE = re.compile(ARTICLE_HEADER_REGEX)
 
 
 def _strip_trailing_chrome(text: str) -> str:
@@ -34,7 +35,7 @@ def _looks_like_section_title(line: str) -> bool:
     line = line.strip()
     if not line or len(line) > 80:
         return False
-    if HEADER_RE.match(line):
+    if DECIMAL_HEADER_RE.match(line) or ARTICLE_HEADER_RE.match(line):
         return False
     words = line.split()
     if not words:
@@ -68,12 +69,23 @@ def chunk_pages_by_clause(pages: list[dict]) -> list[dict]:
         for raw_line in page["text"].split("\n")
     ]
 
+    # Per-document header-pattern selection: if this document contains real
+    # "Article N" header lines, that's its SOLE header pattern (see
+    # ARTICLE_HEADER_REGEX's docstring in config.py) — the decimal pattern
+    # is not also checked, so internally-numbered paragraphs ("1.", "2.")
+    # inside an Article become body text, not separate clause boundaries.
+    # Otherwise, fall back to the decimal pattern every RBI document uses.
+    uses_article_numbering = any(
+        ARTICLE_HEADER_RE.match(line.lstrip(" ")) for line in all_lines
+    )
+    header_re = ARTICLE_HEADER_RE if uses_article_numbering else DECIMAL_HEADER_RE
+
     # Establish the indentation of true clause headers from this document's
     # own layout, rather than a hard-coded column, since it varies by PDF.
     header_indents = [
         _line_indent(line)
         for line in all_lines
-        if HEADER_RE.match(line.lstrip(" "))
+        if header_re.match(line.lstrip(" "))
     ]
     min_header_indent = min(header_indents) if header_indents else 0
     max_header_indent = min_header_indent + HEADER_INDENT_TOLERANCE
@@ -101,11 +113,14 @@ def chunk_pages_by_clause(pages: list[dict]) -> list[dict]:
             line = raw_line.rstrip()
             stripped = line.lstrip(" ")
             indent = len(line) - len(stripped)
-            header_match = HEADER_RE.match(stripped) if indent <= max_header_indent else None
+            header_match = header_re.match(stripped) if indent <= max_header_indent else None
 
             if header_match:
                 flush()  # close out the previous clause using ITS parent section
-                current_clause_number = header_match.group(1) or header_match.group(2)
+                current_clause_number = (
+                    header_match.group(1) if header_re is ARTICLE_HEADER_RE
+                    else header_match.group(1) or header_match.group(2)
+                )
                 remainder = stripped[header_match.end():].strip()
                 current_text_lines = [remainder] if remainder else []
                 current_source_page = page["page_number"]

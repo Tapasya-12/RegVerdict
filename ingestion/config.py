@@ -91,6 +91,37 @@ def build_chunk_id(document_name: str, parent_section: str, clause_number: str, 
 CLAUSE_HEADER_REGEX = r"^(?:Para\s+)?(?:(\d{1,3}[A-Z]?(?:\.\d{1,3}){1,3})\.?|(\d{1,3}[A-Z]?)\.)\s+"
 
 
+# --- Article-style header regex (EU regulations, e.g. GDPR) ---
+# Matches a bare "Article N" header line — nothing else on the line at all.
+# End-anchored ($) rather than requiring trailing whitespace, because
+# clause_chunker.py's caller rstrips every line before matching (so a real
+# header's trailing padding from parse_pdf.py's layout=True extraction is
+# already gone by the time this regex sees it — a header line arrives as
+# exactly "Article 17", nothing after). That end anchor is what excludes
+# in-prose cross-references like "Article 8(1) of the Charter..." or
+# "Article 51;" — both have non-whitespace immediately after the digits
+# (still present after rstrip), so neither reaches end-of-line there.
+#
+# This is checked as a SEPARATE, mutually-exclusive pattern from
+# CLAUSE_HEADER_REGEX above, not folded into the same alternation — see
+# clause_chunker.py's per-document pattern selection. Reason: GDPR articles
+# contain their own internally-numbered paragraphs ("1. The data subject
+# shall...", "2. Where personal data...") in the EXACT decimal format
+# CLAUSE_HEADER_REGEX matches, sitting at ordinary body indentation (~9
+# cols), while real "Article N" headers are centered (~39 cols). If both
+# patterns were active on the same document, the indentation-tolerance
+# baseline (anchored to the shallowest match) would lock onto those
+# internal paragraph numbers, and the real, deeply-indented "Article N"
+# headers would fail the indentation gate entirely — inverting the whole
+# document's chunking. Keeping the patterns mutually exclusive per-document
+# means GDPR's internal "1./2./3." paragraphs simply become body text
+# inside their enclosing Article's chunk, the same way RBI's roman-numeral
+# sub-items (i)-(xi) already fold into their parent clause rather than
+# becoming separate chunks — chunking at the smallest independently-citable
+# unit, not every internal sub-point.
+ARTICLE_HEADER_REGEX = r"^Article\s+(\d{1,3})$"
+
+
 # --- Near-empty "stub" chunk detection ---
 # Some source documents (e.g. rbi_interest_rate_advances) include an
 # appendix/bibliography listing every circular ever superseded, numbered in

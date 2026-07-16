@@ -4,31 +4,10 @@ import IntakeForm from "./components/IntakeForm";
 import ReviewingIndicator from "./components/ReviewingIndicator";
 import ExhibitCard from "./components/ExhibitCard";
 import AuditTrail from "./components/AuditTrail";
+import PolicyDiffView from "./components/PolicyDiffView";
+import { toExhibitProps } from "./verdictUtils";
 
 const API_BASE = "http://localhost:8000";
-
-// tools.check_compliance() nests document/clause under source_clause (and
-// returns it as null for the empty-corpus-match case, evidence_quote: "",
-// grounding_verified: false); ExhibitCard's props are flat, per the design
-// doc. This is the one seam between the two shapes — deliberately no
-// placeholder fallback for document_name/clause_number here: ExhibitCard
-// itself decides how to render the true no-match case ("no matching clause
-// found") vs a real-but-ungrounded citation, and conflating the two by
-// filling in a fallback string here would erase that distinction.
-function toExhibitProps(result) {
-  const source = result.source_clause || null;
-  return {
-    document_name: source?.document,
-    clause_number: source?.clause_number,
-    policy_summary: result.policy_summary,
-    evidence_quote: result.evidence_quote,
-    reasoning: result.reasoning,
-    grounding_verified: result.grounding_verified,
-    grounding_note: result.grounding_note,
-    verdict: result.verdict,
-    confidence: result.confidence,
-  };
-}
 
 let nextExhibitId = 0;
 
@@ -78,11 +57,13 @@ export default function App() {
     }
   }
 
+  const isWideTab = activeTab === "audit" || activeTab === "diff";
+
   return (
     <>
       <div className="ambient"></div>
       <div className="grain"></div>
-      <div className={`wrap${activeTab === "audit" ? " wrap-wide" : ""}`}>
+      <div className={`wrap${isWideTab ? " wrap-wide" : ""}`}>
         <Masthead />
 
         <div className="tab-bar">
@@ -93,6 +74,12 @@ export default function App() {
             Workspace
           </button>
           <button
+            className={`tab-button${activeTab === "diff" ? " active" : ""}`}
+            onClick={() => setActiveTab("diff")}
+          >
+            Policy Diff
+          </button>
+          <button
             className={`tab-button${activeTab === "audit" ? " active" : ""}`}
             onClick={() => setActiveTab("audit")}
           >
@@ -100,7 +87,7 @@ export default function App() {
           </button>
         </div>
 
-        {activeTab === "workspace" ? (
+        {activeTab === "workspace" && (
           <>
             <IntakeForm
               onSubmit={handleSubmit}
@@ -119,9 +106,11 @@ export default function App() {
               ))}
             </div>
           </>
-        ) : (
-          <AuditTrail />
         )}
+
+        {activeTab === "diff" && <PolicyDiffView />}
+
+        {activeTab === "audit" && <AuditTrail />}
       </div>
     </>
   );

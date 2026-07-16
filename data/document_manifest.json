@@ -23,5 +23,11 @@
     "effective_date": "2022-03-14",
     "topic_tags": ["fair practices code", "loan recovery", "grievance redressal", "prepayment"],
     "supersedes_clause_id": ""
+  },
+  "gdpr_regulation_2016_679": {
+    "regulator": "GDPR",
+    "effective_date": "2016-05-04",
+    "topic_tags": ["data protection", "data retention", "consent", "data subject rights"],
+    "supersedes_clause_id": ""
   }
 }

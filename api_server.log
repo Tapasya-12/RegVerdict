@@ -1,0 +1,9 @@
+INFO:     Will watch for changes in these directories: ['c:\\RegVerdict']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [27948] using StatReload
+INFO:     Started server process [9980]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 360 chunks indexed for BM25 + dense search.
+INFO:     127.0.0.1:50379 - "GET /api/health HTTP/1.1" 200 OK

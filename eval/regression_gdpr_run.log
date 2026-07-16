@@ -1,0 +1,389 @@
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_kyc_mas...ive_date': '2016-02-25'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[1/30] Running: For a telegraphic transfer of Rs 75,000, we debit the customer's accou...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 360 chunks indexed for BM25 + dense search.
+[2/30] Running: We obtain and verify PAN under Income Tax Rule 114B for all applicable...
+[3/30] Running: We never collect an account payee cheque on behalf of anyone other tha...
+[4/30] Running: For an existing loan account where the customer hasn't submitted PAN o...
+[5/30] Running: We continue operating a savings account for a customer whose name matc...
+[6/30] Running: We sell a third-party insurance product to a walk-in customer for a ca...
+[7/30] Running: We reject a Person with Disability's request to update their KYC becau...
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 95734, Requested 5726. Please try again in 21m1.44s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 1 at Tue Jul 14 19:22:45 UTC 2026 ===
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 360 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 95674, Requested 5726. Please try again in 20m9.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 1 failed (exit 1), sleeping 1500s ===
+=== Attempt 2 at Tue Jul 14 19:53:19 UTC 2026 ===
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 360 chunks indexed for BM25 + dense search.
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 97, in check_compliance
+    verdict_output = generate_verdict(policy_text, chunks)
+  File "C:\RegVerdict\mcp_server\llm_client.py", line 85, in generate_verdict
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+    ...<5 lines>...
+        ],
+    )
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\resources\chat\completions.py", line 462, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<45 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1284, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\groq\_base_client.py", line 1071, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01km8wvfr4fnwa3vk5a6d5ea88` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 93564, Requested 6519. Please try again in 1m11.712s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 64, in call_with_retry
+    raise RuntimeError(
+    ...<3 lines>...
+    ) from e
+RuntimeError: Hit Groq's DAILY token limit. Progress so far is saved to C:\RegVerdict\eval\regression_checkpoint.json — re-run this script later (after the daily reset) and it will resume from where it stopped, not restart.
+=== Attempt 2 failed (exit 1), sleeping 1500s ===
+=== Attempt 3 at Tue Jul 14 20:18:36 UTC 2026 ===
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 49, in lock
+    win32file.LockFileEx(os_fh, mode, 0, -0x10000, __overlapped)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.error: (33, 'LockFileEx', 'The process cannot access the file because another process has locked a portion of the file.')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 122, in _load
+    portalocker.lock(
+    ~~~~~~~~~~~~~~~~^
+        self._flock_file,
+        ^^^^^^^^^^^^^^^^^
+        portalocker.LockFlags.EXCLUSIVE | portalocker.LockFlags.NON_BLOCKING,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 54, in lock
+    raise exceptions.AlreadyLocked(
+    ...<3 lines>...
+    ) from exc_value
+portalocker.exceptions.AlreadyLocked: (1, 'The process cannot access the file because another process has locked a portion of the file.')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 78, in check_compliance
+    retriever = get_retriever()
+  File "C:\RegVerdict\mcp_server\tools.py", line 33, in get_retriever
+    _retriever_singleton = HybridRetriever()
+  File "C:\RegVerdict\rag\retriever.py", line 32, in __init__
+    self.client = QdrantClient(path=QDRANT_LOCAL_PATH)
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\qdrant_client.py", line 127, in __init__
+    self._client = QdrantLocal(
+                   ~~~~~~~~~~~^
+        location=path,
+        ^^^^^^^^^^^^^^
+        force_disable_check_same_thread=force_disable_check_same_thread,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 68, in __init__
+    self._load()
+    ~~~~~~~~~~^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 127, in _load
+    raise RuntimeError(
+    ...<2 lines>...
+    )
+RuntimeError: Storage folder C:\RegVerdict\data\qdrant_store is already accessed by another instance of Qdrant client. If you require concurrent access, use Qdrant server instead.
+=== Attempt 3 failed (exit 1), sleeping 1500s ===
+=== Attempt 4 at Tue Jul 14 20:43:54 UTC 2026 ===
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 49, in lock
+    win32file.LockFileEx(os_fh, mode, 0, -0x10000, __overlapped)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.error: (33, 'LockFileEx', 'The process cannot access the file because another process has locked a portion of the file.')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 122, in _load
+    portalocker.lock(
+    ~~~~~~~~~~~~~~~~^
+        self._flock_file,
+        ^^^^^^^^^^^^^^^^^
+        portalocker.LockFlags.EXCLUSIVE | portalocker.LockFlags.NON_BLOCKING,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 54, in lock
+    raise exceptions.AlreadyLocked(
+    ...<3 lines>...
+    ) from exc_value
+portalocker.exceptions.AlreadyLocked: (1, 'The process cannot access the file because another process has locked a portion of the file.')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 78, in check_compliance
+    retriever = get_retriever()
+  File "C:\RegVerdict\mcp_server\tools.py", line 33, in get_retriever
+    _retriever_singleton = HybridRetriever()
+  File "C:\RegVerdict\rag\retriever.py", line 32, in __init__
+    self.client = QdrantClient(path=QDRANT_LOCAL_PATH)
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\qdrant_client.py", line 127, in __init__
+    self._client = QdrantLocal(
+                   ~~~~~~~~~~~^
+        location=path,
+        ^^^^^^^^^^^^^^
+        force_disable_check_same_thread=force_disable_check_same_thread,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 68, in __init__
+    self._load()
+    ~~~~~~~~~~^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 127, in _load
+    raise RuntimeError(
+    ...<2 lines>...
+    )
+RuntimeError: Storage folder C:\RegVerdict\data\qdrant_store is already accessed by another instance of Qdrant client. If you require concurrent access, use Qdrant server instead.
+=== Attempt 4 failed (exit 1), sleeping 1500s ===
+=== Attempt 5 at Tue Jul 14 21:09:12 UTC 2026 ===
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 49, in lock
+    win32file.LockFileEx(os_fh, mode, 0, -0x10000, __overlapped)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.error: (33, 'LockFileEx', 'The process cannot access the file because another process has locked a portion of the file.')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 122, in _load
+    portalocker.lock(
+    ~~~~~~~~~~~~~~~~^
+        self._flock_file,
+        ^^^^^^^^^^^^^^^^^
+        portalocker.LockFlags.EXCLUSIVE | portalocker.LockFlags.NON_BLOCKING,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\portalocker\portalocker.py", line 54, in lock
+    raise exceptions.AlreadyLocked(
+    ...<3 lines>...
+    ) from exc_value
+portalocker.exceptions.AlreadyLocked: (1, 'The process cannot access the file because another process has locked a portion of the file.')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\RegVerdict\eval\run_regression.py", line 193, in <module>
+    run_regression()
+    ~~~~~~~~~~~~~~^^
+  File "C:\RegVerdict\eval\run_regression.py", line 114, in run_regression
+    result = call_with_retry(policy)
+  File "C:\RegVerdict\eval\run_regression.py", line 58, in call_with_retry
+    return tools.check_compliance(policy)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\RegVerdict\mcp_server\tools.py", line 78, in check_compliance
+    retriever = get_retriever()
+  File "C:\RegVerdict\mcp_server\tools.py", line 33, in get_retriever
+    _retriever_singleton = HybridRetriever()
+  File "C:\RegVerdict\rag\retriever.py", line 32, in __init__
+    self.client = QdrantClient(path=QDRANT_LOCAL_PATH)
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\qdrant_client.py", line 127, in __init__
+    self._client = QdrantLocal(
+                   ~~~~~~~~~~~^
+        location=path,
+        ^^^^^^^^^^^^^^
+        force_disable_check_same_thread=force_disable_check_same_thread,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 68, in __init__
+    self._load()
+    ~~~~~~~~~~^^
+  File "C:\RegVerdict\venv\Lib\site-packages\qdrant_client\local\qdrant_local.py", line 127, in _load
+    raise RuntimeError(
+    ...<2 lines>...
+    )
+RuntimeError: Storage folder C:\RegVerdict\data\qdrant_store is already accessed by another instance of Qdrant client. If you require concurrent access, use Qdrant server instead.
+=== Attempt 5 failed (exit 1), sleeping 1500s ===
+'(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /BAAI/bge-small-en-v1.5/resolve/main/modules.json (Caused by NameResolutionError("HTTPSConnection(host=\'huggingface.co\', port=443): Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: acd1a636-b7b1-4f73-b90f-b8454f76b8af)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main/modules.json
+Retrying in 1s [Retry 1/5].
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_kyc_mas...ive_date': '2016-02-25'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_interes...ive_date': '2016-03-03'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+C:\RegVerdict\venv\Lib\site-packages\pydantic\main.py:475: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `SourceClause` - serialized value may not be as expected [field_name='source_clause', input_value={'document': 'rbi_microfi...ive_date': '2022-03-14'}, input_type=dict])
+  return self.__pydantic_serializer__.to_python(
+[INFO] Resuming from checkpoint — 7/30 cases already completed, skipping those.
+[8/30] Running: We open an account via Aadhaar OTP-based e-KYC after the customer verb...
+[INFO] Building BM25 index from Qdrant collection ...
+[INFO] Ready — 360 chunks indexed for BM25 + dense search.
+[9/30] Running: Instead of automated alert software, we rely on a dedicated compliance...
+[10/30] Running: We open a pooled account for a professional intermediary and rely enti...
+[11/30] Running: We apply these interest-rate-on-advances directions to all our domesti...
+[12/30] Running: We offer our advances customers a choice between fixed-rate and floati...
+[13/30] Running: For our MCLR-linked floating rate loans, we let borrowers choose a res...
+[14/30] Running: We maintain two separate Base Rates -- one for retail customers and a ...
+[15/30] Running: When we take over a rural branch from another commercial bank, we imme...
+[16/30] Running: We haven't reviewed our Base Rate in the last 18 months, and the curre...
+[17/30] Running: We charge a flat 24% interest rate on all personal loans under Rs 50,0...
+[18/30] Running: We calculate our cost of funds using a blended average that excludes o...
+[19/30] Running: We raise a borrower's credit risk premium on their external-benchmark-...
+[20/30] Running: We treat a personal loan to our company's Chief Financial Officer the ...
+[21/30] Running: We use a standard-form loan agreement for all our microfinance loans, ...
+[22/30] Running: We provide borrowers with the details of our recovery-related grievanc...
+[23/30] Running: When we recover a third-party insurance charge from a microfinance bor...
+[24/30] Running: We bundle a non-credit insurance product with a microfinance loan with...
+[25/30] Running: Our NBFC-MFI has held only 45% of its total assets as qualifying micro...
+[26/30] Running: We classify a Rs 2 lakh collateral-free loan to a household earning Rs...
+[27/30] Running: Our recovery agent's authorization letter to the borrower lists the re...
+[28/30] Running: Instead of using RBI's indicative household-income-assessment methodol...
+[29/30] Running: Our not-for-profit company engaged in microfinance activities has asse...
+[30/30] Running: We extend microfinance loans to households whose monthly loan obligati...
+
+[INFO] All cases completed. Scoring ...
+
+=== Regression Set Results (30 cases) ===
+
+Verdict accuracy (clear cases only): 17/20 (85.0%)
+
+Dangerous ungrounded verdicts (confidence >= 0.7, NOT grounded, NOT a known data artifact): 0
+Exit criterion: this number must be 0 — PASS
+
+Full results (including all ambiguous-case reasoning) saved to C:\RegVerdict\eval\regression_results.json
+Review the 'ambiguous' category rows manually — no automated check can grade whether the REASONING for a genuinely ambiguous case is sound.

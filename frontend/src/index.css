@@ -827,3 +827,83 @@ textarea.intake-field::placeholder {
 .verdict-badge.conflict {
   color: var(--archive-plum);
 }
+
+.verdict-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.verdict-diff-arrow {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  color: var(--ink-text-soft);
+}
+
+/* ---------- policy diff view ---------- */
+.diff-fields {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-left: 10px;
+}
+.diff-field {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+}
+.diff-field-label {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-text-soft);
+  margin: 0 0 6px;
+}
+.diff-field .intake-field {
+  padding-left: 0;
+}
+
+.diff-banner {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 16px 22px;
+  border-radius: 3px;
+  margin-bottom: 28px;
+  background: var(--kraft);
+  border-left: 4px solid currentColor;
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.45);
+}
+.diff-banner.green {
+  color: var(--seal-green);
+}
+.diff-banner.red {
+  color: var(--seal-red);
+}
+.diff-banner.gold {
+  color: var(--gazette-gold);
+}
+.diff-banner.neutral {
+  color: var(--ink-text-soft);
+}
+
+.diff-columns {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.diff-column {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+.diff-column-label {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  margin: 0 0 12px;
+}
