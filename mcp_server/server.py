@@ -1,5 +1,5 @@
 """
-MCP server entry point — wires the 7 functions in tools.py as MCP tools
+MCP server entry point — wires the 8 functions in tools.py as MCP tools
 using the FastMCP interface. Run with:
 
     mcp dev server.py        # opens MCP Inspector for manual contract testing
@@ -61,6 +61,15 @@ def simulate_policy_change(original_policy: str, proposed_change: str) -> dict:
     """Diffs two policy versions and reports whether the compliance verdict flips
     between them — lets a team pre-test an amendment before filing it."""
     return tools.simulate_policy_change(original_policy, proposed_change)
+
+
+@mcp.tool()
+def get_clause_graph(document_name: str) -> dict:
+    """Extracts the intra-document clause cross-reference graph for one indexed
+    document — nodes are clauses, edges are references (e.g. 'Article 17',
+    'Section 5.2') found in one clause's text that point to another clause in
+    the same document."""
+    return tools.get_clause_graph(document_name)
 
 
 if __name__ == "__main__":

@@ -40,6 +40,11 @@ class SimulatePolicyChangeRequest(BaseModel):
     proposed_change: str
 
 
+class CompareJurisdictionsRequest(BaseModel):
+    policy_text: str
+    regulators: list[str]
+
+
 @app.get("/api/health")
 def health() -> dict:
     # Also pre-warms tools.get_retriever()'s singleton (embedding model +
@@ -101,6 +106,57 @@ def simulate_policy_change(req: SimulatePolicyChangeRequest) -> dict:
         "clause_number": None,
     })
 
+    return result
+
+
+@app.post("/api/compare_jurisdictions")
+def compare_jurisdictions(req: CompareJurisdictionsRequest) -> dict:
+    if not req.policy_text or not req.policy_text.strip():
+        raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
+    if not req.regulators:
+        raise HTTPException(status_code=400, detail="regulators must be a non-empty list")
+
+    result = tools.compare_jurisdictions(req.policy_text, req.regulators)
+
+    def verdict_str(v):
+        return v.value if hasattr(v, "value") else v
+
+    # No single clause/confidence to log here — each regulator in the
+    # comparison has its own, so the audit entry carries a per-regulator
+    # verdict summary instead (mirrors simulate_policy_change's
+    # "before → after" summary string for the same reason).
+    results_by_regulator = result.get("results_by_regulator", {})
+    verdict_summary = " · ".join(
+        f"{regulator}: {verdict_str(r.get('verdict'))}"
+        for regulator, r in results_by_regulator.items()
+    )
+    audit_log.append_log({
+        "tool": "compare_jurisdictions",
+        "policy_text": req.policy_text,
+        "verdict": verdict_summary,
+        "confidence": None,
+        "document_name": None,
+        "clause_number": None,
+    })
+
+    return result
+
+
+@app.get("/api/documents")
+def documents() -> list[str]:
+    retriever = tools.get_retriever()
+    return sorted({
+        p.get("document_name") for p in retriever.payload_by_id.values()
+        if p.get("document_name")
+    })
+
+
+@app.get("/api/clause_graph/{document_name}")
+def clause_graph(document_name: str) -> dict:
+    # Read-only structural query, not a compliance verdict — no audit_log entry.
+    result = tools.get_clause_graph(document_name)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
     return result
 
 

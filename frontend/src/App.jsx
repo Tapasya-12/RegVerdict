@@ -5,6 +5,8 @@ import ReviewingIndicator from "./components/ReviewingIndicator";
 import ExhibitCard from "./components/ExhibitCard";
 import AuditTrail from "./components/AuditTrail";
 import PolicyDiffView from "./components/PolicyDiffView";
+import JurisdictionComparator from "./components/JurisdictionComparator";
+import ClauseGraphView from "./components/ClauseGraphView";
 import { toExhibitProps } from "./verdictUtils";
 
 const API_BASE = "http://localhost:8000";
@@ -57,7 +59,8 @@ export default function App() {
     }
   }
 
-  const isWideTab = activeTab === "audit" || activeTab === "diff";
+  const isWideTab =
+    activeTab === "audit" || activeTab === "diff" || activeTab === "compare" || activeTab === "graph";
 
   return (
     <>
@@ -85,6 +88,18 @@ export default function App() {
           >
             Audit Trail
           </button>
+          <button
+            className={`tab-button${activeTab === "compare" ? " active" : ""}`}
+            onClick={() => setActiveTab("compare")}
+          >
+            Compare Jurisdictions
+          </button>
+          <button
+            className={`tab-button${activeTab === "graph" ? " active" : ""}`}
+            onClick={() => setActiveTab("graph")}
+          >
+            Clause Graph
+          </button>
         </div>
 
         {activeTab === "workspace" && (
@@ -111,6 +126,10 @@ export default function App() {
         {activeTab === "diff" && <PolicyDiffView />}
 
         {activeTab === "audit" && <AuditTrail />}
+
+        {activeTab === "compare" && <JurisdictionComparator />}
+
+        {activeTab === "graph" && <ClauseGraphView />}
       </div>
     </>
   );

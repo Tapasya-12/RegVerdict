@@ -218,6 +218,30 @@ textarea.intake-field::placeholder {
   color: #8b8266;
   font-style: italic;
 }
+.regulator-select {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  padding-left: 10px;
+}
+.regulator-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-text-soft);
+  cursor: pointer;
+}
+.regulator-checkbox input[type="checkbox"] {
+  accent-color: var(--gazette-gold);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
 .intake-footer {
   display: flex;
   justify-content: space-between;
@@ -888,6 +912,9 @@ textarea.intake-field::placeholder {
 .diff-banner.neutral {
   color: var(--ink-text-soft);
 }
+.diff-banner.plum {
+  color: var(--archive-plum);
+}
 
 .diff-columns {
   display: flex;
@@ -906,4 +933,86 @@ textarea.intake-field::placeholder {
   text-transform: uppercase;
   color: var(--parchment-dim);
   margin: 0 0 12px;
+}
+
+/* ---------- clause graph ---------- */
+.clause-graph-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.clause-graph-select-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-text-soft);
+}
+.clause-graph-select-label select {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--ink-text);
+  background: var(--parchment);
+  border: 1px solid var(--kraft-shadow);
+  border-radius: 2px;
+  padding: 7px 10px;
+  outline: none;
+}
+
+.clause-graph-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.clause-graph-canvas {
+  flex: 1 1 560px;
+  min-width: 0;
+  background: var(--kraft);
+  border-radius: 3px;
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.clause-graph-canvas svg {
+  display: block;
+}
+.clause-graph-empty {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-text-soft);
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.clause-detail {
+  flex: 0 0 320px;
+  min-width: 260px;
+  background: var(--kraft);
+  border-radius: 3px;
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.clause-detail-body {
+  padding: 22px 24px 24px;
+}
+.clause-detail-section {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-text-soft);
+  margin: 0 0 14px;
+}
+.clause-detail-text {
+  font-family: "Newsreader", serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-text);
+  margin: 0;
+  max-height: 480px;
+  overflow-y: auto;
 }

@@ -21,6 +21,7 @@ from retriever import HybridRetriever  # noqa: E402
 from schema import VerdictOutput, Verdict, SourceClause  # noqa: E402
 from grounding import apply_grounding_check  # noqa: E402
 from llm_client import generate_verdict  # noqa: E402
+import clause_graph  # noqa: E402
 
 # Retriever is expensive to construct (loads embedding model + builds BM25
 # index) — build once, reuse across all tool calls in this process.
@@ -271,3 +272,36 @@ def simulate_policy_change(original_policy: str, proposed_change: str) -> dict:
             else f"Verdict unchanged: '{original_result.get('verdict')}'"
         ),
     }
+
+
+# ---------------------------------------------------------------------------
+# Tool 8: get_clause_graph(document_name)
+# ---------------------------------------------------------------------------
+
+def get_clause_graph(document_name: str) -> dict:
+    if not document_name or not document_name.strip():
+        return {"error": "document_name must be a non-empty string"}
+
+    retriever = get_retriever()
+    all_payloads = list(retriever.payload_by_id.values())
+    known_document_names = sorted({
+        p.get("document_name") for p in all_payloads if p.get("document_name")
+    })
+
+    chunks = [p for p in all_payloads if p.get("document_name") == document_name]
+    if not chunks:
+        return {
+            "error": f"No indexed chunks found for document_name '{document_name}'. "
+                     f"Valid document_names: {', '.join(known_document_names)}.",
+        }
+
+    graph = clause_graph.build_clause_graph(chunks)
+
+    # Enrich each node with its clause's full text so the UI's node-click
+    # side panel doesn't need a second lookup endpoint — clause_graph.py's
+    # own node/edge logic stays untouched, this is purely an API-layer add-on.
+    text_by_clause_number = {c["clause_number"]: c.get("text", "") for c in chunks}
+    for node in graph["nodes"]:
+        node["text"] = text_by_clause_number.get(node["clause_number"], "")
+
+    return {"document_name": document_name, **graph}
