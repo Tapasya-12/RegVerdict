@@ -17,6 +17,23 @@ QDRANT_LOCAL_PATH = str(BASE_DIR / "data" / "qdrant_store")  # embedded, no serv
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 RAW_PDF_DIR.mkdir(parents=True, exist_ok=True)
 
+# --- Qdrant connection mode ---
+# Unset (default): embedded/local mode, QDRANT_LOCAL_PATH above — no server
+# to run, this is what local dev without Docker has always used. Set (e.g.
+# QDRANT_URL=http://qdrant:6333, as docker-compose.yml does for the api
+# service): connect to a real Qdrant server instead. get_qdrant_client()
+# below is the one place that branches on this, so callers never duplicate
+# the if/else.
+QDRANT_URL = os.environ.get("QDRANT_URL")
+
+
+def get_qdrant_client():
+    from qdrant_client import QdrantClient  # local import: keep this a light config module
+
+    if QDRANT_URL:
+        return QdrantClient(url=QDRANT_URL)
+    return QdrantClient(path=QDRANT_LOCAL_PATH)
+
 # --- Embedding model ---
 # Good general-purpose open model. Swap to a domain-tuned one later if
 # Recall@5 on the gold set (Phase 2) comes in weak on regulatory jargon.

@@ -17,9 +17,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "ingestion"))
 
 from sentence_transformers import SentenceTransformer
-from qdrant_client import QdrantClient
 
-from config import QDRANT_LOCAL_PATH, COLLECTION_NAME, EMBED_MODEL_NAME  # noqa: E402
+from config import COLLECTION_NAME, EMBED_MODEL_NAME, get_qdrant_client  # noqa: E402
 from retrieval_config import (  # noqa: E402
     DENSE_CANDIDATES_K, BM25_CANDIDATES_K, RRF_K, RERANK_CANDIDATE_POOL,
 )
@@ -29,7 +28,7 @@ from reranker import CrossEncoderReranker  # noqa: E402
 
 class HybridRetriever:
     def __init__(self):
-        self.client = QdrantClient(path=QDRANT_LOCAL_PATH)
+        self.client = get_qdrant_client()
         self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
 
         print("[INFO] Building BM25 index from Qdrant collection ...")

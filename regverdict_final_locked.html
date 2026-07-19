@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RegVerdict — chat redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,600;1,9..144,900&family=Newsreader:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-navy: #181A1F;
+    --ink-navy-deep: #101216;
+    --sidebar-navy: #101216;
+    --parchment: #FFFFFF;
+    --parchment-dim: #7A8290;
+    --kraft: #22252C;
+    --kraft-shadow: #343841;
+    --ink-text: #FFFFFF;
+    --ink-text-soft: #8A93A0;
+    --seal-green: #5FA88A;
+    --seal-red: #C46E7A;
+    --gazette-gold: #9C87D4;
+    --stamp-review: #B79A5D;
+    --archive-plum: #8A5A82;
+    --highlighter: rgba(156, 135, 212, 0.16);
+    --user-bubble: #282B33;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    background:var(--ink-navy);
+    font-family:'Newsreader', serif;
+    color:var(--parchment);
+    overflow:hidden;
+  }
+
+  /* ================= SIDEBAR ================= */
+  .sidebar{
+    width:264px;
+    flex-shrink:0;
+    position:relative;
+    z-index:1;
+    background:rgba(20,22,28,0.85);
+    backdrop-filter:blur(10px) saturate(140%);
+    -webkit-backdrop-filter:blur(10px) saturate(140%);
+    border-right:1px solid rgba(255,255,255,0.1);
+    display:flex;
+    flex-direction:column;
+    padding:22px 16px;
+  }
+  .side-wordmark{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:900;
+    font-size:24px;
+    color:var(--parchment);
+    margin:4px 0 4px 6px;
+  }
+  .side-wordmark em{color:var(--gazette-gold); font-style:italic;}
+  .side-sub{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin:0 0 22px 6px;
+  }
+  .new-check-btn{
+    display:flex; align-items:center; gap:8px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:13px; font-weight:600;
+    color:#12141A;
+    background:var(--gazette-gold);
+    border:none; border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    margin-bottom:22px;
+    transition:filter 0.15s ease, transform 0.15s ease;
+  }
+  .new-check-btn:hover{filter:brightness(1.08); transform:translateY(-1px);}
+  .new-check-btn:active{transform:translateY(0) scale(0.98);}
+
+  .nav-label{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin:4px 0 8px 8px;
+  }
+  .nav-item{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:13.5px;
+    color:var(--parchment-dim);
+    padding:9px 10px;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:2px;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .nav-item:hover{background:rgba(255,255,255,0.05); color:var(--parchment);}
+  .nav-item.active{background:rgba(156,135,212,0.14); color:var(--gazette-gold);}
+  .nav-icon{display:none;}
+
+  .sidebar-divider{height:1px; background:rgba(255,255,255,0.06); margin:16px 0;}
+
+  .recent-item{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:12.5px;
+    color:var(--parchment-dim);
+    padding:8px 10px;
+    border-radius:7px;
+    cursor:pointer;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    transition:background 0.15s ease;
+  }
+  .recent-item:hover{background:rgba(255,255,255,0.05);}
+
+  .sidebar-footer{
+    margin-top:auto;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+    padding:10px 8px 0;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ================= MAIN CHAT AREA ================= */
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    position:relative;
+    z-index:1;
+  }
+  .ambient{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:radial-gradient(ellipse 1100px 700px at 15% -5%, rgba(156,135,212,0.18), transparent 55%),
+                radial-gradient(ellipse 900px 700px at 95% 100%, rgba(95,168,138,0.12), transparent 60%),
+                radial-gradient(ellipse 600px 500px at 60% 40%, rgba(196,110,122,0.07), transparent 60%);
+  }
+  .chat-header{
+    padding:16px 32px;
+    background:rgba(22,24,30,0.85);
+    backdrop-filter:blur(8px) saturate(140%);
+    -webkit-backdrop-filter:blur(8px) saturate(140%);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative; z-index:1;
+  }
+  .chat-header-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:13px; font-weight:600;
+    color:var(--parchment);
+  }
+  .chat-header-sub{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:12.5px;
+    color:var(--parchment-dim);
+    margin-top:2px;
+  }
+  .corpus-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+    border:1px solid rgba(255,255,255,0.12);
+    padding:5px 10px;
+    border-radius:20px;
+  }
+
+  .chat-thread{
+    flex:1;
+    overflow-y:auto;
+    padding:28px 32px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    position:relative; z-index:1;
+  }
+
+  /* ---- user message bubble ---- */
+  .msg-row{display:flex;}
+  .msg-row.user{justify-content:flex-end;}
+  .msg-row.assistant{justify-content:flex-start;}
+  .bubble-user{
+    max-width:64%;
+    background:rgba(40,43,51,0.9);
+    border:1px solid rgba(255,255,255,0.1);
+    color:var(--ink-text);
+    font-family:'Newsreader', serif;
+    font-size:15.5px;
+    line-height:1.55;
+    padding:13px 18px;
+    border-radius:16px 16px 4px 16px;
+  }
+
+  /* ---- assistant message: verdict card, reframed as a chat bubble ---- */
+  .bubble-assistant{
+    max-width:78%;
+    background:rgba(30,33,40,0.92);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:4px 16px 16px 16px;
+    overflow:hidden;
+    box-shadow:0 10px 28px -12px rgba(0,0,0,0.4);
+  }
+  .assistant-head{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 16px;
+    background:rgba(16,18,22,0.9);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .avatar{
+    width:20px; height:20px;
+    border-radius:5px;
+    background:var(--gazette-gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-style:italic; font-weight:900;
+    font-size:13px;
+    color:var(--ink-navy-deep);
+  }
+  .assistant-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--parchment);
+    position:relative;
+    cursor:help;
+    border-bottom:1px dotted rgba(255,255,255,0.5);
+  }
+  .assistant-tag .preview{
+    display:none;
+    position:absolute;
+    top:24px; left:0;
+    width:260px;
+    background:rgba(14,16,20,0.95);
+    border:1px solid rgba(156,135,212,0.35);
+    border-radius:8px;
+    padding:11px 13px;
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--parchment);
+    box-shadow:0 12px 28px -8px rgba(0,0,0,0.6);
+    z-index:5;
+  }
+  .assistant-tag:hover .preview{display:block;}
+  .assistant-body{padding:18px 20px 18px;}
+  .assistant-summary{
+    font-family:'Newsreader', serif;
+    font-size:16.5px;
+    color:var(--ink-text);
+    margin:0 0 14px;
+    line-height:1.5;
+  }
+  .quote-block{
+    background:linear-gradient(var(--highlighter), var(--highlighter));
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+    border-left:3px solid var(--ink-text);
+    padding:11px 14px;
+    margin:0 0 14px;
+  }
+  .quote-label{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-text-soft);
+    margin:0 0 4px;
+  }
+  .quote-text{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    line-height:1.6;
+    color:var(--ink-text);
+    margin:0;
+  }
+  .reasoning{
+    font-family:'Newsreader', serif;
+    font-size:14.5px;
+    line-height:1.65;
+    color:var(--ink-text-soft);
+    margin:0 0 16px;
+  }
+  .assistant-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--kraft-shadow);
+    padding-top:13px;
+  }
+  .grounding-note{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10.5px;
+    color:var(--ink-text-soft);
+    display:flex; align-items:center; gap:6px;
+    max-width:60%;
+  }
+  .grounding-note .dot{width:6px; height:6px; border-radius:50%; background:var(--seal-green); flex-shrink:0;}
+  .stamp{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600; font-size:13px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    border:2px solid currentColor;
+    border-radius:5px;
+    padding:6px 12px 5px;
+    transform:rotate(-4deg);
+  }
+  .stamp.compliant{color:var(--seal-green);}
+  .stamp.review{color:var(--stamp-review);}
+
+  /* ---- retrieval trace (replaces generic typing dots) ---- */
+  .typing-row{display:none; align-items:flex-start; gap:10px; padding-left:4px;}
+  .typing-row.active{display:flex;}
+  .typing-avatar{
+    width:20px; height:20px; border-radius:5px; background:var(--gazette-gold);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:'Fraunces', serif; font-style:italic; font-weight:900; font-size:13px; color:var(--ink-navy-deep);
+  }
+  .trace-box{
+    background:rgba(30,33,40,0.92);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:4px 16px 16px 16px;
+    padding:13px 16px;
+    min-width:280px;
+  }
+  .trace-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-text-soft);
+    display:flex; align-items:center; gap:7px;
+    padding:3px 0;
+    opacity:0;
+    animation:trace-in 0.3s ease-out forwards;
+  }
+  .trace-line .check{color:var(--seal-green); width:12px; flex-shrink:0;}
+  .trace-line:nth-child(1){animation-delay:0.1s;}
+  .trace-line:nth-child(2){animation-delay:0.5s;}
+  .trace-line:nth-child(3){animation-delay:0.9s;}
+  .trace-line:nth-child(4){animation-delay:1.3s;}
+  @keyframes trace-in{from{opacity:0; transform:translateX(-4px);} to{opacity:1; transform:translateX(0);}}
+
+  /* ---- input bar ---- */
+  .input-bar-wrap{
+    padding:16px 32px 22px;
+    position:relative; z-index:1;
+  }
+  .chip-row{
+    display:flex; gap:8px; flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .chip{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:12px;
+    color:var(--parchment-dim);
+    border:1px solid rgba(255,255,255,0.14);
+    background:rgba(255,255,255,0.05);
+    padding:7px 13px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .chip:hover{background:rgba(156,135,212,0.14); color:var(--gazette-gold); border-color:rgba(156,135,212,0.4);}
+  .input-bar{
+    display:flex; align-items:flex-end; gap:10px;
+    background:rgba(34,37,44,0.9);
+    border:1px solid rgba(255,255,255,0.14);
+    box-shadow:0 12px 32px -12px rgba(0,0,0,0.5);
+    border-radius:20px;
+    padding:10px 10px 10px 20px;
+  }
+  .input-bar textarea{
+    flex:1;
+    border:none; background:transparent; resize:none;
+    font-family:'Newsreader', serif; font-size:15px;
+    color:var(--ink-text);
+    outline:none;
+    max-height:120px;
+    line-height:1.5;
+    padding:6px 0;
+  }
+  .input-bar textarea::placeholder{color:#8890A0; font-style:italic;}
+  .send-btn{
+    height:38px;
+    padding:0 20px;
+    border-radius:10px;
+    background:var(--ink-navy);
+    border:1px solid rgba(255,255,255,0.1);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-text);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    transition:background 0.15s ease, transform 0.15s ease;
+  }
+  .send-btn:hover{background:var(--ink-navy-deep); transform:translateY(-1px);}
+  .send-btn:active{transform:translateY(0) scale(0.97);}
+  .input-hint{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+    text-align:center;
+    margin-top:10px;
+  }
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12); border-radius:4px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="ambient"></div>
+  <div class="sidebar">
+    <div class="side-wordmark">Reg<em>Verdict</em></div>
+    <div class="side-sub">Compliance Copilot</div>
+
+    <button class="new-check-btn">New compliance check</button>
+
+    <div class="nav-label">Tools</div>
+    <div class="nav-item active">Compliance Workspace</div>
+    <div class="nav-item">Policy Diff</div>
+    <div class="nav-item">Compare Jurisdictions</div>
+    <div class="nav-item">Audit Trail</div>
+    <div class="nav-item">Clause Graph</div>
+
+    <div class="sidebar-divider"></div>
+    <div class="nav-label">Recent</div>
+    <div class="recent-item">Pre-payment penalty on microfinance loans…</div>
+    <div class="recent-item">Interest rate reset periodicity on MCLR…</div>
+    <div class="recent-item">Customer data retention beyond 5 years…</div>
+
+    <div class="sidebar-footer">361 clauses indexed · RBI · GDPR</div>
+  </div>
+
+  <div class="main">
+    <div class="chat-header">
+      <div>
+        <div class="chat-header-title">Compliance Workspace</div>
+        <div class="chat-header-sub">Describe a policy — every answer cites its exact source clause.</div>
+      </div>
+      <div class="corpus-pill">RBI · GDPR</div>
+    </div>
+
+    <div class="chat-thread" id="thread">
+      <div class="msg-row user">
+        <div class="bubble-user">We do not charge any pre-payment penalty when a microfinance borrower repays their loan early.</div>
+      </div>
+
+      <div class="msg-row assistant">
+        <div class="bubble-assistant">
+          <div class="assistant-head">
+            <span class="avatar">R</span>
+            <span class="assistant-tag">rbi_microfinance_fair_practices §6.6
+              <span class="preview">"There shall be no pre-payment penalty on microfinance loans." — full clause available in Clause Graph</span>
+            </span>
+          </div>
+          <div class="assistant-body">
+            <p class="assistant-summary">Charging pre-payment penalty on microfinance loans</p>
+            <div class="quote-block">
+              <p class="quote-label">Verbatim evidence</p>
+              <p class="quote-text">"There shall be no pre-payment penalty on microfinance loans."</p>
+            </div>
+            <p class="reasoning">The policy directly matches the clause's prohibition — no fee is applied for early repayment, satisfying the requirement exactly as written.</p>
+            <div class="assistant-footer">
+              <div class="grounding-note"><span class="dot"></span>Verified verbatim against source chunk.</div>
+              <span class="stamp compliant">Compliant</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="typing-row" id="typing">
+        <span class="typing-avatar">R</span>
+        <div class="trace-box" id="traceBox">
+          <div class="trace-line"><span class="check">›</span> searching rbi_kyc_master_direction…</div>
+          <div class="trace-line"><span class="check">›</span> searching rbi_interest_rate_advances…</div>
+          <div class="trace-line"><span class="check">›</span> re-ranking 20 candidates…</div>
+          <div class="trace-line"><span class="check">✓</span> verifying citation against source text…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-bar-wrap">
+      <div class="chip-row">
+        <span class="chip" data-text="Can we charge a prepayment penalty on a floating rate loan?">Prepayment penalty on floating rate loan?</span>
+        <span class="chip" data-text="How long must we retain customer KYC records after account closure?">KYC record retention period?</span>
+        <span class="chip" data-text="Can we call a defaulting borrower before 9am to collect payment?">Recovery call timing rules?</span>
+      </div>
+      <div class="input-bar">
+        <textarea rows="1" placeholder="Describe a business decision or policy…">We charge a 2% processing fee on personal loans above ₹5 lakh.</textarea>
+        <button class="send-btn" id="sendBtn">Send</button>
+      </div>
+      <div class="input-hint">RegVerdict checks every citation against the source text before showing you a verdict.</div>
+    </div>
+  </div>
+
+<script>
+  var thread = document.getElementById('thread');
+  var typing = document.getElementById('typing');
+  document.getElementById('sendBtn').addEventListener('click', function(){
+    typing.classList.add('active');
+    thread.scrollTop = thread.scrollHeight;
+    setTimeout(function(){
+      typing.classList.remove('active');
+      thread.scrollTop = thread.scrollHeight;
+    }, 1700);
+  });
+  document.querySelectorAll('.chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelector('.input-bar textarea').value = chip.getAttribute('data-text');
+    });
+  });
+</script>
+</body>
+</html>

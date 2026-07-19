@@ -1,0 +1,66 @@
+version: "3.9"
+
+# First run: qdrant_storage below starts as a brand-new, empty volume — the
+# API's HybridRetriever (rag/retriever.py) assumes the collection already
+# exists and will fail on the first real request until it's populated.
+# Run ingestion once against the Dockerized Qdrant before relying on
+# check_compliance/fetch_regulation/etc. to return real answers:
+#   docker compose run --rm -e QDRANT_URL=http://qdrant:6333 backend \
+#       python ingestion/embed_and_load.py
+# (data/raw_pdfs/ must already have the source PDFs on the host — it's
+# volume-mounted into the backend service below, same as local dev.)
+
+services:
+  # Real Qdrant SERVER (not embedded/local-file mode) — this is the actual
+  # fix for the recurring "only one process can access qdrant_store" lock
+  # issue you've hit multiple times. A real server supports multiple
+  # simultaneous connections (the API + a batch script like run_regression.py
+  # can both talk to it at once), which embedded mode fundamentally cannot do.
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - qdrant
+    environment:
+      # Points the retriever at the real Qdrant server instead of a local
+      # embedded file path — this line is why the code change in
+      # ingestion/config.py (see the note below) is required for this to work.
+      - QDRANT_URL=http://qdrant:6333
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    volumes:
+      # SQLite database (users, audit log, documents, recent queries) persists
+      # here across container rebuilds — NOT baked into the image.
+      - ./data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # Bind-mount source for live editing without rebuilding the image —
+      # the anonymous volume on node_modules below prevents your host's
+      # node_modules (built for Windows) from overwriting the container's
+      # own Linux-built copy, which would otherwise break native deps.
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  qdrant_storage:

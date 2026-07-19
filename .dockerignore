@@ -1,0 +1,26 @@
+# Without this, the full repo (venv/, frontend/node_modules/, the Qdrant
+# store) gets sent to the Docker daemon as build context on every build —
+# multiple GB, most of it never even referenced by either Dockerfile's
+# explicit COPY commands.
+venv/
+__pycache__/
+*.pyc
+
+frontend/node_modules/
+frontend/dist/
+
+data/qdrant_store/
+data/raw_pdfs/*.pdf
+data/regverdict.db
+data/users.db
+data/audit_log.jsonl
+
+# Secrets — never bake these into an image layer. Real values reach the
+# containers via docker-compose.yml's environment: block instead, sourced
+# from .env.docker (--env-file), which is itself gitignored.
+.env
+.env.docker
+mcp_server/.env
+
+.git/
+*.log

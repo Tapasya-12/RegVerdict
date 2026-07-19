@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
-import { STAMP_CLASS_BY_VERDICT } from "./ExhibitCard";
+import { apiFetch } from "../api";
 
-const API_BASE = "http://localhost:8000";
 const VERDICTS = ["Compliant", "Non-Compliant", "Requires Legal Review", "Conflicting Regulations"];
+
+// One source of truth for verdict -> color class, local to Audit Trail now
+// that ExhibitCard (the old ink-stamp component) no longer exists.
+const STAMP_CLASS_BY_VERDICT = {
+  Compliant: "compliant",
+  "Non-Compliant": "noncompliant",
+  "Requires Legal Review": "review",
+  "Conflicting Regulations": "conflict",
+};
 
 function formatTimestamp(iso) {
   if (!iso) return "—";
@@ -40,7 +48,7 @@ function VerdictCell({ verdict }) {
   return <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[verdict] || "review"}`}>{verdict}</span>;
 }
 
-const CSV_COLUMNS = ["timestamp", "tool", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
+const CSV_COLUMNS = ["timestamp", "user", "tool", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
 
 function toCSV(rows) {
   const escape = (value) => {
@@ -89,7 +97,7 @@ export default function AuditTrail() {
 
       setLoading(true);
       setError(null);
-      fetch(`${API_BASE}/api/audit_trail?${params.toString()}`)
+      apiFetch(`/api/audit_trail?${params.toString()}`)
         .then((res) => {
           if (!res.ok) throw new Error(`audit_trail returned ${res.status}`);
           return res.json();
@@ -107,7 +115,15 @@ export default function AuditTrail() {
   }, [verdict, search, startDate, endDate]);
 
   return (
-    <div className="audit-trail">
+    <>
+      <div className="chat-header">
+        <div>
+          <div className="chat-header-title">Audit Trail</div>
+          <div className="chat-header-sub">Every logged compliance check, filterable and exportable.</div>
+        </div>
+      </div>
+
+      <div className="panel-content">
       <div className="audit-filters">
         <label>
           Verdict
@@ -162,6 +178,7 @@ export default function AuditTrail() {
             <thead>
               <tr>
                 <th>Timestamp</th>
+                <th>User</th>
                 <th>Tool</th>
                 <th>Policy</th>
                 <th>Verdict</th>
@@ -173,6 +190,7 @@ export default function AuditTrail() {
               {records.map((r) => (
                 <tr key={r.id}>
                   <td className="audit-mono">{formatTimestamp(r.timestamp)}</td>
+                  <td className="audit-mono">{r.user || "—"}</td>
                   <td className="audit-mono">{r.tool || "—"}</td>
                   <td title={r.policy_text}>{truncate(r.policy_text)}</td>
                   <td>
@@ -190,6 +208,7 @@ export default function AuditTrail() {
           </table>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

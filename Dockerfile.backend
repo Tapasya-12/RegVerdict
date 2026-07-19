@@ -1,0 +1,27 @@
+# Backend: FastAPI + the full RAG/verdict pipeline.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System deps some Python packages need to build (e.g. anything with C extensions)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the actual application code
+COPY api/ ./api/
+COPY mcp_server/ ./mcp_server/
+COPY rag/ ./rag/
+COPY ingestion/ ./ingestion/
+
+# NOTE: data/ (Qdrant store, SQLite db) is intentionally NOT copied in —
+# it's mounted as a volume in docker-compose.yml instead, so ingested data
+# and the user database persist across container rebuilds instead of being
+# baked into the image and lost every time you rebuild.
+
+EXPOSE 8000
+
+CMD ["uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000"]

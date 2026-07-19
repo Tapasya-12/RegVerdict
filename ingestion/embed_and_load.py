@@ -1,10 +1,9 @@
 """
 Phase 1 - Step 3: chunks -> embeddings -> Qdrant.
 
-Uses Qdrant in embedded/local mode (QdrantClient(path=...)) so there is
-NO separate server to run for local development. Swap to a hosted/Docker
-Qdrant later (Phase 6 hardening) by changing QDRANT_LOCAL_PATH usage to
-QdrantClient(url=...) — the rest of the code doesn't change.
+Connects via config.get_qdrant_client() — embedded/local mode (no server to
+run) by default, or a real Qdrant server when QDRANT_URL is set (Phase 6
+hardening / docker-compose.yml's qdrant service). See config.py.
 """
 
 import json
@@ -14,8 +13,8 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
 from config import (
-    QDRANT_LOCAL_PATH, COLLECTION_NAME, EMBED_MODEL_NAME, EMBED_DIM, BASE_DIR,
-    build_chunk_id, is_stub_chunk,
+    COLLECTION_NAME, EMBED_MODEL_NAME, EMBED_DIM, BASE_DIR,
+    build_chunk_id, is_stub_chunk, get_qdrant_client,
 )
 from parse_pdf import parse_all_pdfs
 from clause_chunker import chunk_pages_by_clause
@@ -32,7 +31,7 @@ def load_manifest() -> dict:
 
 
 def get_client() -> QdrantClient:
-    client = QdrantClient(path=QDRANT_LOCAL_PATH)
+    client = get_qdrant_client()
     existing = [c.name for c in client.get_collections().collections]
     if COLLECTION_NAME not in existing:
         client.create_collection(

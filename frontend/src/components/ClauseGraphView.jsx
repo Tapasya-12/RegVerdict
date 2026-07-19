@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import { apiFetch } from "../api";
 
-const API_BASE = "http://localhost:8000";
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 600;
 const NODE_RADIUS = 15;
@@ -20,7 +20,7 @@ export default function ClauseGraphView() {
   // Populate the document dropdown from the corpus itself, not a hardcoded
   // list — a 5th document appearing shouldn't require a frontend change.
   useEffect(() => {
-    fetch(`${API_BASE}/api/documents`)
+    apiFetch("/api/documents")
       .then((res) => {
         if (!res.ok) throw new Error(`api/documents returned ${res.status}`);
         return res.json();
@@ -41,7 +41,7 @@ export default function ClauseGraphView() {
     setError(null);
     setSelectedNode(null);
     setGraph(null);
-    fetch(`${API_BASE}/api/clause_graph/${encodeURIComponent(selectedDocument)}`)
+    apiFetch(`/api/clause_graph/${encodeURIComponent(selectedDocument)}`)
       .then((res) => {
         if (!res.ok) throw new Error(`clause_graph returned ${res.status}`);
         return res.json();
@@ -72,7 +72,7 @@ export default function ClauseGraphView() {
 
     const link = zoomLayer
       .append("g")
-      .attr("stroke", "var(--gazette-gold, #d4941a)")
+      .attr("stroke", "var(--gazette-gold, #9c87d4)")
       .attr("stroke-opacity", 0.45)
       .selectAll("line")
       .data(edges)
@@ -85,11 +85,20 @@ export default function ClauseGraphView() {
       .data(nodes)
       .join("circle")
       .attr("r", NODE_RADIUS)
-      .attr("fill", "var(--kraft, #fbf3e1)")
-      .attr("stroke", "var(--ink-navy, #17264d)")
+      .attr("fill", "var(--parchment, #ffffff)")
+      .attr("stroke", "var(--kraft-shadow, #343841)")
       .attr("stroke-width", 1.5)
+      .attr("tabindex", 0)
+      .attr("role", "button")
+      .attr("aria-label", (d) => `Clause ${d.clause_number}`)
       .style("cursor", "pointer")
-      .on("click", (_event, d) => setSelectedNode(d));
+      .on("click", (_event, d) => setSelectedNode(d))
+      .on("keydown", (event, d) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setSelectedNode(d);
+        }
+      });
 
     const label = zoomLayer
       .append("g")
@@ -101,7 +110,7 @@ export default function ClauseGraphView() {
       .attr("dy", "0.32em")
       .attr("font-family", "IBM Plex Mono, monospace")
       .attr("font-size", 9.5)
-      .attr("fill", "var(--ink-text, #1e2440)")
+      .attr("fill", "var(--ink-navy-deep, #101216)")
       .style("pointer-events", "none");
 
     node.call(
@@ -123,6 +132,16 @@ export default function ClauseGraphView() {
         })
     );
 
+    function ticked() {
+      link
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
+      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+      label.attr("x", (d) => d.x).attr("y", (d) => d.y);
+    }
+
     const simulation = d3
       .forceSimulation(nodes)
       .force(
@@ -139,23 +158,35 @@ export default function ClauseGraphView() {
       // most RBI documents are sparse) don't get flung off-canvas by pure
       // charge repulsion with nothing else anchoring them.
       .force("x", d3.forceX(CANVAS_WIDTH / 2).strength(0.025))
-      .force("y", d3.forceY(CANVAS_HEIGHT / 2).strength(0.025))
-      .on("tick", () => {
-        link
-          .attr("x1", (d) => d.source.x)
-          .attr("y1", (d) => d.source.y)
-          .attr("x2", (d) => d.target.x)
-          .attr("y2", (d) => d.target.y);
-        node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-        label.attr("x", (d) => d.x).attr("y", (d) => d.y);
-      });
+      .force("y", d3.forceY(CANVAS_HEIGHT / 2).strength(0.025));
+
+    // The force simulation's "flying into place" entrance is driven by JS
+    // (a tick timer calling .attr() every frame), not a CSS animation/
+    // transition — the app-wide prefers-reduced-motion CSS block can't
+    // touch it. Run it to convergence synchronously instead and paint once.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      simulation.stop();
+      for (let i = 0; i < 300; i++) simulation.tick();
+      ticked();
+    } else {
+      simulation.on("tick", ticked);
+    }
 
     simulationRef.current = simulation;
     return () => simulation.stop();
   }, [graph]);
 
   return (
-    <div>
+    <>
+      <div className="chat-header">
+        <div>
+          <div className="chat-header-title">Clause Graph</div>
+          <div className="chat-header-sub">Cross-reference graph between clauses within one document.</div>
+        </div>
+      </div>
+
+      <div className="panel-content">
       <div className="clause-graph-controls">
         <label className="clause-graph-select-label">
           Document
@@ -222,6 +253,7 @@ export default function ClauseGraphView() {
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

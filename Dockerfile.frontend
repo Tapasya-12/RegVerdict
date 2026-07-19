@@ -1,0 +1,17 @@
+# Frontend: dev-mode Vite server (not a production build — see the README
+# note in docker-compose.yml about switching to a production build later).
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+
+COPY frontend/ .
+
+EXPOSE 5173
+
+# --host is required so Vite listens on all interfaces inside the container,
+# not just localhost — without this, the port mapping from docker-compose
+# would connect but get nothing back.
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
