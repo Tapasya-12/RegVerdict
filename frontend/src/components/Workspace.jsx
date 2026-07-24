@@ -60,7 +60,7 @@ export default function Workspace({ indexedChunks, regulators, pendingFill, onQu
         throw new Error(`API returned ${res.status}`);
       }
       const result = await res.json();
-      setMessages((prev) => [...prev, { id: nextMessageId++, role: "assistant", result }]);
+      setMessages((prev) => [...prev, { id: nextMessageId++, role: "assistant", result, policyText: text }]);
       onQuerySubmitted?.(text);
     } catch (err) {
       console.error("check_compliance failed:", err);
@@ -88,7 +88,7 @@ export default function Workspace({ indexedChunks, regulators, pendingFill, onQu
             </div>
           ) : (
             <div className="msg-row assistant" key={msg.id}>
-              <AssistantBubble result={msg.result} />
+              <AssistantBubble result={msg.result} policyText={msg.policyText} />
             </div>
           )
         )}

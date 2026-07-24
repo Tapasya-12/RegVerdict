@@ -11,6 +11,7 @@ against a BM25 float.
 """
 
 import sys
+import threading
 from pathlib import Path
 
 # Make ingestion/ importable without requiring the caller to fiddle with PYTHONPATH
@@ -45,10 +46,31 @@ class HybridRetriever:
         # model download/load, and plenty of callers (e.g. the retrieve()
         # REPL below) never need it.
         self._reranker = None
+        # FastAPI runs sync endpoints in a thread pool, and this retriever
+        # is a shared singleton (tools.get_retriever()) — an unguarded
+        # "if None: construct" here is a real race: concurrent first-use
+        # requests can each see None and construct their own CrossEncoder
+        # simultaneously, which crashes with a PyTorch meta-tensor error
+        # (caught via a 25-concurrent-request rate-limit test). The lock
+        # only guards construction, not every rerank() call — once built,
+        # concurrent inference on the same model is fine.
+        self._reranker_lock = threading.Lock()
 
     def dense_search(self, query: str, k: int = DENSE_CANDIDATES_K) -> list[tuple[str, int]]:
         """Returns [(point_id, rank), ...] ordered best-first, rank is 1-indexed."""
         query_vector = self.embed_model.encode(query, normalize_embeddings=True).tolist()
+        # qdrant-client's embedded/local-path mode (config.QDRANT_URL unset —
+        # the only mode available without Docker) is NOT safe for true
+        # concurrent access, even from threads of the same process: a
+        # 25-concurrent-request burst raised "Storage folder ... is already
+        # accessed by another instance of Qdrant client". A Python-level
+        # lock here was tried and reverted — it turned a clean, catchable
+        # RuntimeError into requests hanging indefinitely instead (the lock
+        # can only serialize the Python call, not whatever the underlying
+        # Rust engine is actually blocked on), which is a worse failure
+        # mode. This is exactly the limitation docker-compose.yml's qdrant
+        # service comment already documents — real concurrent access needs
+        # the real Qdrant server (QDRANT_URL), not a workaround here.
         hits = self.client.search(
             collection_name=COLLECTION_NAME,
             query_vector=query_vector,
@@ -116,7 +138,9 @@ class HybridRetriever:
         the wrong document that both retrievers score highly on their own).
         """
         if self._reranker is None:
-            self._reranker = CrossEncoderReranker()
+            with self._reranker_lock:
+                if self._reranker is None:  # re-check: another thread may have built it while we waited
+                    self._reranker = CrossEncoderReranker()
         candidates = self.retrieve(query, top_k=RERANK_CANDIDATE_POOL)
         return self._reranker.rerank(query, candidates, top_k=top_k)
 

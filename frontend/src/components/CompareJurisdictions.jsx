@@ -104,7 +104,7 @@ export default function CompareJurisdictions({ regulators }) {
               {entries.map(([regulator, result]) => (
                 <div className="diff-bubble-col" key={regulator}>
                   <p className="diff-bubble-col-label">{regulator}</p>
-                  <AssistantBubble result={result} />
+                  <AssistantBubble result={result} policyText={submittedText} />
                 </div>
               ))}
             </div>

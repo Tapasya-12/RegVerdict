@@ -30,16 +30,30 @@
   --ink-navy-deep: #101216;
   --sidebar-navy: #101216;
   --parchment: #ffffff;
-  --parchment-dim: #7a8290;
+  /* Nudged from #7a8290 — measured 4.20:1 against the auth-card background
+     (rgb(30,32,39)), just under WCAG AA's 4.5:1 for normal text, confirmed
+     via real rendered-pixel sampling, not just the raw hex math. This value
+     clears 4.68:1 there with margin to spare, and only shifts each channel
+     +8/255 (~3%) — not a visual redesign, a correction to a confirmed
+     accessibility failure in the (otherwise unchanged) locked palette. */
+  --parchment-dim: #828a98;
   --kraft: #22252c;
   --kraft-shadow: #343841;
   --ink-text: #ffffff;
   --ink-text-soft: #8a93a0;
   --seal-green: #5fa88a;
-  --seal-red: #c46e7a;
+  /* Nudged from #c46e7a — measured 4.28:1 as the Audit Trail verdict-badge
+     text color against --kraft (lighter than the chat-bubble backgrounds
+     the same color also renders against, where it already passed at
+     4.55:1) — a real, confirmed AA failure specific to that context. +8/255
+     clears 4.73:1 there. */
+  --seal-red: #cc7682;
   --gazette-gold: #9c87d4;
   --stamp-review: #b79a5d;
-  --archive-plum: #8a5a82;
+  /* Nudged from #8a5a82 — measured 3.08:1 as the Compare Jurisdictions
+     disagreement banner text against --kraft, a significant, confirmed AA
+     failure (not borderline like the others). +32/255 clears 4.80:1. */
+  --archive-plum: #aa7aa2;
   --highlighter: rgba(156, 135, 212, 0.16);
   --user-bubble: #282b33;
 }
@@ -166,6 +180,12 @@ body {
 .auth-submit-btn:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+.auth-field input:focus-visible,
+.auth-submit-btn:focus-visible,
+.auth-switch-link:focus-visible {
+  outline: 2px solid var(--gazette-gold);
+  outline-offset: 2px;
 }
 .auth-switch {
   font-family: "Space Grotesk", sans-serif;
@@ -598,6 +618,37 @@ body {
   background: var(--seal-green);
   flex-shrink: 0;
 }
+.assistant-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+/* ---- export-as-word button: same pill treatment as .chip, so this reuses
+   the input bar's suggestion-chip language rather than inventing a new one ---- */
+.export-docx-btn {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--parchment-dim);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.export-docx-btn:hover:not(:disabled) {
+  color: var(--gazette-gold);
+  border-color: rgba(156, 135, 212, 0.4);
+  background: rgba(156, 135, 212, 0.14);
+}
+.export-docx-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
 
 /* ---- verdict stamp: static, rotated, no animation (replaces the
    split-flap experiment from the v4 mockup — the locked design dropped it) ---- */
@@ -724,9 +775,19 @@ body {
 .recent-item:focus-visible,
 .recent-action:focus-visible,
 .chip:focus-visible,
-.send-btn:focus-visible {
+.send-btn:focus-visible,
+.export-docx-btn:focus-visible,
+.audit-export-btn:focus-visible,
+.regulator-checkbox input[type="checkbox"]:focus-visible {
   outline: 2px solid var(--gazette-gold);
   outline-offset: 2px;
+}
+/* .input-bar textarea is intentionally borderless (transparent, blends into
+   the pill) — so its focus indicator has to live on the parent pill instead
+   of the textarea itself, same idea as .auth-field input's focus border,
+   just applied via :focus-within since the border lives one element up. */
+.input-bar:focus-within {
+  border-color: var(--gazette-gold);
 }
 .chip:hover {
   background: rgba(156, 135, 212, 0.14);
@@ -1231,4 +1292,84 @@ body {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ==========================================================================
+   NARROW VIEWPORT (~700px and below — covers the ~400px case explicitly
+   checked). There were zero media queries anywhere in this file before this
+   block — confirmed via a real 400px Playwright run that the fixed 264px
+   sidebar alone consumes 66% of the viewport, and the Workspace textarea
+   collapses to literally not visible/interactable. This is a functional
+   fix (stack sidebar above content, compact it, hide secondary chrome),
+   not a visual redesign of the locked desktop layout — everything above
+   700px is completely untouched.
+   ========================================================================== */
+@media (max-width: 700px) {
+  body {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar {
+    width: 100%;
+    flex-shrink: 1;
+    padding: 14px 16px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .side-wordmark {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .side-sub {
+    margin-bottom: 14px;
+  }
+  .new-check-btn {
+    margin-bottom: 14px;
+  }
+  /* Section headers + Recent/Pinned history + footer add a lot of vertical
+     height for content that isn't essential to complete a quick check on a
+     small screen — collapsed here, not removed from the DOM (still in the
+     tab order for keyboard/screen-reader users who scroll to them). */
+  .nav-label,
+  .sidebar-divider,
+  .recent-row,
+  .recent-empty,
+  .sidebar-footer {
+    display: none;
+  }
+  /* The 5 tool buttons become a horizontal, wrapping chip row instead of a
+     vertical list, so the sidebar's height stays small. */
+  .nav-item {
+    display: inline-flex;
+    width: auto;
+    margin: 0 6px 6px 0;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+  }
+
+  .chat-header,
+  .panel-content,
+  .chat-thread,
+  .input-bar-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .chat-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .bubble-user,
+  .bubble-assistant {
+    max-width: 100%;
+  }
+
+  /* Compare Jurisdictions / Policy Diff side-by-side columns and Clause
+     Graph's canvas+detail pair already use flex-wrap + flex-basis
+     (.diff-bubble-col, .clause-graph-layout's children) from the earlier
+     accessibility pass, so they stack on their own once there's no 264px
+     sidebar competing for width — verified via screenshot, not assumed. */
 }

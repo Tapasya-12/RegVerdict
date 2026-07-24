@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { exportReportDocx } from "../api";
+
 const STAMP_CLASS_BY_VERDICT = {
   Compliant: "compliant",
   "Non-Compliant": "noncompliant",
@@ -8,11 +11,31 @@ const STAMP_CLASS_BY_VERDICT = {
 // Shared by every tool that renders a check_compliance-shaped verdict as a
 // chat bubble (Workspace, Policy Diff's before/after pair, Compare
 // Jurisdictions' per-regulator results) — one component, one look.
-export default function AssistantBubble({ result }) {
+// policyText is the original submitted text (not result.policy_summary,
+// which is the LLM's rephrased one-liner) — export needs it to re-run
+// generate_compliance_report() server-side and get the same verdict back.
+export default function AssistantBubble({ result, policyText }) {
   const source = result.source_clause;
   const tag = source ? `${source.document} §${source.clause_number}` : "no matching clause found";
   const hasQuote = !!result.evidence_quote && result.evidence_quote.trim().length > 0;
   const stampClass = STAMP_CLASS_BY_VERDICT[result.verdict] || "review";
+
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState(null);
+
+  async function handleExport() {
+    if (exporting) return;
+    setExporting(true);
+    setExportError(null);
+    try {
+      await exportReportDocx(policyText);
+    } catch (err) {
+      console.error("export_report failed:", err);
+      setExportError(err.message || "Could not export this report.");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <div className="bubble-assistant">
@@ -36,6 +59,11 @@ export default function AssistantBubble({ result }) {
           </p>
         </div>
         <p className="reasoning">{result.reasoning}</p>
+        {exportError && (
+          <p className="input-hint" style={{ color: "var(--seal-red)", marginBottom: 10 }}>
+            {exportError}
+          </p>
+        )}
         <div className="assistant-footer">
           <div className="grounding-note">
             <span
@@ -47,7 +75,14 @@ export default function AssistantBubble({ result }) {
                 ? "Verified verbatim against source clause"
                 : "No retrieved chunk could ground this claim.")}
           </div>
-          <span className={`stamp ${stampClass}`}>{result.verdict}</span>
+          <div className="assistant-footer-actions">
+            {policyText && (
+              <button className="export-docx-btn" onClick={handleExport} disabled={exporting}>
+                {exporting ? "Exporting…" : "Export as Word"}
+              </button>
+            )}
+            <span className={`stamp ${stampClass}`}>{result.verdict}</span>
+          </div>
         </div>
       </div>
     </div>

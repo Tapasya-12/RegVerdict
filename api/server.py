@@ -22,11 +22,21 @@ from dotenv import load_dotenv  # noqa: E402
 
 load_dotenv(Path(__file__).resolve().parent.parent / "mcp_server" / ".env")
 
+import io  # noqa: E402
+from datetime import datetime, timezone  # noqa: E402
+
+import groq  # noqa: E402
 import jwt  # noqa: E402
-from fastapi import Depends, FastAPI, HTTPException  # noqa: E402
+from docx import Document  # noqa: E402
+from docx.shared import Inches, Pt  # noqa: E402
+from fastapi import Depends, FastAPI, HTTPException, Request  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from fastapi.responses import JSONResponse, StreamingResponse  # noqa: E402
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm  # noqa: E402
 from pydantic import BaseModel  # noqa: E402
+from slowapi import Limiter  # noqa: E402
+from slowapi.errors import RateLimitExceeded  # noqa: E402
+from slowapi.util import get_remote_address  # noqa: E402
 
 import audit_log_sqlite  # noqa: E402
 import auth  # noqa: E402
@@ -49,6 +59,11 @@ app.add_middleware(
     allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_methods=["*"],
     allow_headers=["*"],
+    # Content-Disposition carries export_report's real filename — browsers
+    # always get it, but the Fetch API hides all but a small "safe" set of
+    # response headers from JS on cross-origin requests unless the server
+    # explicitly opts it in here.
+    expose_headers=["Content-Disposition"],
 )
 
 
@@ -60,6 +75,37 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
         return auth.decode_access_token(token)
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
         raise HTTPException(status_code=401, detail="Invalid or expired session")
+
+
+def rate_limit_key(request: Request) -> str:
+    # Keyed by the authenticated user, not IP — multiple users can share a
+    # network (office wifi, NAT), which would make IP-based limiting either
+    # too strict (one heavy user blocks everyone behind the same router) or
+    # too loose (nothing stops one user cycling networks). The token is
+    # already validated by get_current_user's own Depends() on these routes
+    # by the time slowapi's wrapper runs, so decoding failures here should
+    # be unreachable — the IP fallback only exists so a key_func call can
+    # never itself throw and take down the request.
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[len("Bearer "):]
+        try:
+            return auth.decode_access_token(token)
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            pass
+    return get_remote_address(request)
+
+
+limiter = Limiter(key_func=rate_limit_key)
+app.state.limiter = limiter
+
+
+@app.exception_handler(RateLimitExceeded)
+def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Too many requests — please wait a moment before submitting another check."},
+    )
 
 
 def get_current_user_id(username: str = Depends(get_current_user)) -> int:
@@ -127,6 +173,38 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()) -> dict:
     return {"access_token": auth.create_access_token(user["username"]), "token_type": "bearer"}
 
 
+def _run_or_groq_503(fn, *args):
+    # The 20/minute app-level limiter above caps request COUNT per user, but
+    # Groq's own quota is tokens-per-minute across the whole shared account —
+    # a burst of legitimate, allowed requests can still exhaust it (confirmed
+    # via a 25-concurrent-request test: request count was capped correctly,
+    # but one of the 20 allowed requests still hit groq.RateLimitError and
+    # surfaced as a raw unhandled 500). This turns that into the same kind
+    # of clean, expected response as our own rate limit, distinguishable by
+    # message from the app-level 429 above.
+    try:
+        return fn(*args)
+    except groq.GroqError as e:
+        raise HTTPException(
+            status_code=503,
+            detail="The compliance engine's shared quota is temporarily exhausted — please wait a few seconds and try again.",
+        ) from e
+    except RuntimeError as e:
+        # rag/retriever.py's embedded-mode Qdrant client can't safely serve
+        # true concurrent access (see the comment in dense_search()) — under
+        # heavy simultaneous load this is the specific error it raises.
+        # Only local dev without Docker hits this; a real Qdrant server
+        # (QDRANT_URL) doesn't have the limitation. Narrowed to this exact
+        # message so an unrelated RuntimeError elsewhere in the pipeline
+        # still surfaces as a real 500, not silently masked as "busy."
+        if "already accessed by another instance" in str(e):
+            raise HTTPException(
+                status_code=503,
+                detail="The compliance engine is handling another request right now — please try again in a moment.",
+            ) from e
+        raise
+
+
 def _verdict_str(v):
     # verdict_output.model_dump() (mode="python", the default) leaves
     # "verdict" as a raw Verdict enum member — fine for FastAPI's own JSON
@@ -137,11 +215,14 @@ def _verdict_str(v):
 
 
 @app.post("/api/check_compliance")
-def check_compliance(req: CheckComplianceRequest, user_id: int = Depends(get_current_user_id)) -> dict:
+@limiter.limit("20/minute")
+def check_compliance(
+    request: Request, req: CheckComplianceRequest, user_id: int = Depends(get_current_user_id)
+) -> dict:
     if not req.policy_text or not req.policy_text.strip():
         raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
 
-    result = tools.check_compliance(req.policy_text)
+    result = _run_or_groq_503(tools.check_compliance, req.policy_text)
 
     source_clause = result.get("source_clause") or {}
     audit_log_sqlite.append_log(
@@ -166,15 +247,16 @@ def check_compliance(req: CheckComplianceRequest, user_id: int = Depends(get_cur
 
 
 @app.post("/api/simulate_policy_change")
+@limiter.limit("20/minute")
 def simulate_policy_change(
-    req: SimulatePolicyChangeRequest, user_id: int = Depends(get_current_user_id)
+    request: Request, req: SimulatePolicyChangeRequest, user_id: int = Depends(get_current_user_id)
 ) -> dict:
     if not req.original_policy or not req.original_policy.strip():
         raise HTTPException(status_code=400, detail="original_policy must be a non-empty string")
     if not req.proposed_change or not req.proposed_change.strip():
         raise HTTPException(status_code=400, detail="proposed_change must be a non-empty string")
 
-    result = tools.simulate_policy_change(req.original_policy, req.proposed_change)
+    result = _run_or_groq_503(tools.simulate_policy_change, req.original_policy, req.proposed_change)
 
     original_verdict = _verdict_str(result.get("original_verdict", {}).get("verdict"))
     proposed_verdict = _verdict_str(result.get("proposed_verdict", {}).get("verdict"))
@@ -192,15 +274,16 @@ def simulate_policy_change(
 
 
 @app.post("/api/compare_jurisdictions")
+@limiter.limit("20/minute")
 def compare_jurisdictions(
-    req: CompareJurisdictionsRequest, user_id: int = Depends(get_current_user_id)
+    request: Request, req: CompareJurisdictionsRequest, user_id: int = Depends(get_current_user_id)
 ) -> dict:
     if not req.policy_text or not req.policy_text.strip():
         raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
     if not req.regulators:
         raise HTTPException(status_code=400, detail="regulators must be a non-empty list")
 
-    result = tools.compare_jurisdictions(req.policy_text, req.regulators)
+    result = _run_or_groq_503(tools.compare_jurisdictions, req.policy_text, req.regulators)
 
     # No single clause/confidence to log here — each regulator in the
     # comparison has its own, so the audit entry carries a per-regulator
@@ -265,7 +348,7 @@ def generate_compliance_report(
 ) -> dict:
     if not req.policy_text or not req.policy_text.strip():
         raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
-    return tools.generate_compliance_report(req.policy_text)
+    return _run_or_groq_503(tools.generate_compliance_report, req.policy_text)
 
 
 @app.post("/api/detect_regulatory_conflicts")
@@ -274,12 +357,97 @@ def detect_regulatory_conflicts(
 ) -> dict:
     if not req.policy_text or not req.policy_text.strip():
         raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
-    return tools.detect_regulatory_conflicts(req.policy_text)
+    return _run_or_groq_503(tools.detect_regulatory_conflicts, req.policy_text)
 
 
 @app.get("/api/regulation_history/{clause_id}")
 def get_regulation_history(clause_id: str, current_user: str = Depends(get_current_user)) -> dict:
     return tools.get_regulation_history(clause_id)
+
+
+def _build_report_docx(report: dict, policy_text: str, current_user: str) -> tuple[io.BytesIO, str]:
+    # Pure rendering — no HTTP/auth concerns — so it's testable directly
+    # against a real captured report dict without needing a live server
+    # request (useful when Groq's own quota is what's under test).
+    verdict = report.get("verdict", {})
+
+    doc = Document()
+    doc.add_heading("RegVerdict Compliance Report", level=1)
+
+    doc.add_heading("Policy Received", level=2)
+    doc.add_paragraph(report.get("policy_received", policy_text))
+
+    doc.add_heading("Relevant Regulations Found", level=2)
+    relevant_regs = report.get("relevant_regulations_found", [])
+    if relevant_regs:
+        for reg in relevant_regs:
+            doc.add_paragraph(
+                f"{reg.get('document_name')} §{reg.get('clause_number')} ({reg.get('regulator')})",
+                style="List Bullet",
+            )
+    else:
+        doc.add_paragraph("No relevant regulations found in the indexed corpus.")
+
+    doc.add_heading("Verdict", level=2)
+    doc.add_paragraph(verdict.get("policy_summary", ""))
+
+    verdict_p = doc.add_paragraph()
+    verdict_p.add_run("Verdict: ").bold = True
+    verdict_p.add_run(_verdict_str(verdict.get("verdict")) or "—")
+
+    confidence_p = doc.add_paragraph()
+    confidence_p.add_run("Confidence: ").bold = True
+    confidence = verdict.get("confidence")
+    confidence_p.add_run(f"{confidence:.2f}" if isinstance(confidence, (int, float)) else "—")
+
+    doc.add_paragraph("Evidence Quote:").runs[0].bold = True
+    quote_p = doc.add_paragraph()
+    quote_p.paragraph_format.left_indent = Inches(0.5)
+    quote_text = verdict.get("evidence_quote")
+    quote_run = quote_p.add_run(f'"{quote_text}"' if quote_text else "— no verbatim span available —")
+    quote_run.italic = True
+
+    doc.add_heading("Reasoning", level=3)
+    doc.add_paragraph(verdict.get("reasoning", "—"))
+
+    doc.add_heading("Recommended Action", level=3)
+    doc.add_paragraph(verdict.get("recommended_action", "—"))
+
+    generated_at = datetime.now(timezone.utc)
+    footer_p = doc.add_paragraph()
+    footer_run = footer_p.add_run(
+        f"Generated by RegVerdict on {generated_at.strftime('%Y-%m-%d %H:%M UTC')} for {current_user}"
+    )
+    footer_run.italic = True
+    footer_run.font.size = Pt(9)
+
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+
+    filename = f"regverdict_report_{generated_at.strftime('%Y%m%d_%H%M%S')}.docx"
+    return buffer, filename
+
+
+@app.post("/api/export_report")
+def export_report(req: CheckComplianceRequest, current_user: str = Depends(get_current_user)) -> StreamingResponse:
+    # Re-runs generate_compliance_report() fresh rather than accepting a
+    # verdict payload from the client — a client-supplied verdict could be
+    # tampered with before export, and this is the same tool the frontend
+    # already displayed the verdict from, so the .docx matches what the
+    # user saw. Not rate-limited (unlike check_compliance/etc.) per this
+    # task's explicit scope, though it does call Groq the same as those —
+    # flagged, not silently decided.
+    if not req.policy_text or not req.policy_text.strip():
+        raise HTTPException(status_code=400, detail="policy_text must be a non-empty string")
+
+    report = _run_or_groq_503(tools.generate_compliance_report, req.policy_text)
+    buffer, filename = _build_report_docx(report, req.policy_text, current_user)
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @app.get("/api/audit_trail")

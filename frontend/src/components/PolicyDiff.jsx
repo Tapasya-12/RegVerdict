@@ -62,7 +62,15 @@ export default function PolicyDiff({ regulators }) {
         throw new Error(`API returned ${res.status}`);
       }
       const data = await res.json();
-      setComparisons((prev) => [...prev, { id: nextComparisonId++, data }]);
+      setComparisons((prev) => [
+        ...prev,
+        {
+          id: nextComparisonId++,
+          data,
+          originalPolicyText: originalPolicy.trim(),
+          proposedChangeText: proposedChange.trim(),
+        },
+      ]);
       setOriginalPolicy("");
       setProposedChange("");
     } catch (err) {
@@ -84,7 +92,7 @@ export default function PolicyDiff({ regulators }) {
       </div>
 
       <div className="chat-thread" ref={threadRef}>
-        {comparisons.map(({ id, data }) => {
+        {comparisons.map(({ id, data, originalPolicyText, proposedChangeText }) => {
           const banner = classifyBanner(
             data.original_verdict?.verdict,
             data.proposed_verdict?.verdict,
@@ -98,11 +106,11 @@ export default function PolicyDiff({ regulators }) {
               <div className="diff-bubble-row">
                 <div className="diff-bubble-col">
                   <p className="diff-bubble-col-label">Before</p>
-                  <AssistantBubble result={data.original_verdict} />
+                  <AssistantBubble result={data.original_verdict} policyText={originalPolicyText} />
                 </div>
                 <div className="diff-bubble-col">
                   <p className="diff-bubble-col-label">After</p>
-                  <AssistantBubble result={data.proposed_verdict} />
+                  <AssistantBubble result={data.proposed_verdict} policyText={proposedChangeText} />
                 </div>
               </div>
             </div>
