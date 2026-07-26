@@ -9,7 +9,9 @@ PyJWT are both simple, widely-used, and have prebuilt wheels for current
 Python versions.
 """
 
+import hashlib
 import os
+import secrets
 import sqlite3
 import bcrypt
 import jwt
@@ -26,6 +28,7 @@ DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 12  # 12 hour sessions
+RESET_TOKEN_EXPIRE_MINUTES = 30
 
 
 def _require_secret():
@@ -82,6 +85,20 @@ def init_db():
             pinned INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
+        )
+    """)
+
+    # token_hash, never the raw token, is what's stored — same reasoning as
+    # password_hash: a DB read (backup, leak, insider) shouldn't hand out
+    # something usable to reset an account.
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS password_resets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            token_hash TEXT UNIQUE NOT NULL,
+            expires_at TEXT NOT NULL,
+            used INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
         )
     """)
 
@@ -154,6 +171,78 @@ def authenticate_user(username: str, password: str) -> dict | None:
     if not bcrypt.checkpw(password.encode("utf-8"), user["password_hash"].encode("utf-8")):
         return None
     return {"id": user["id"], "username": user["username"], "email": user["email"]}
+
+
+def get_user_by_email(email: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM users WHERE email = ?", (email.strip().lower(),)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def _hash_reset_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def request_password_reset(email: str) -> None:
+    """Silently does nothing if the email isn't registered — the caller
+    always returns the same generic response either way, so whether an
+    email exists never leaks through timing or response shape, same
+    principle as authenticate_user() not distinguishing wrong-password from
+    no-such-user.
+
+    No email service is configured for this project, so "delivery" is
+    printing the reset link to the server console, clearly labeled as
+    simulating a send."""
+    user = get_user_by_email(email)
+    if not user:
+        return
+
+    raw_token = secrets.token_urlsafe(32)
+    expires_at = (datetime.now(timezone.utc) + timedelta(minutes=RESET_TOKEN_EXPIRE_MINUTES)).isoformat()
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        "INSERT INTO password_resets (user_id, token_hash, expires_at, used, created_at) VALUES (?, ?, ?, 0, ?)",
+        (user["id"], _hash_reset_token(raw_token), expires_at, datetime.now(timezone.utc).isoformat()),
+    )
+    conn.commit()
+    conn.close()
+
+    print(
+        f"[SIMULATED EMAIL] Password reset for {user['email']}: "
+        f"http://localhost:5173/reset?token={raw_token}"
+    )
+
+
+def confirm_password_reset(token: str, new_password: str) -> None:
+    """Raises ValueError with one generic message for every failure mode
+    (unknown token, expired, already used) — never reveals which, for the
+    same non-enumeration reason request_password_reset() stays silent on
+    unknown emails."""
+    if len(new_password) < 8:
+        raise ValueError("Password must be at least 8 characters.")
+
+    generic_error = "This reset link is invalid or has expired. Please request a new one."
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute(
+            "SELECT * FROM password_resets WHERE token_hash = ? AND used = 0",
+            (_hash_reset_token(token),),
+        ).fetchone()
+
+        if not row or datetime.fromisoformat(row["expires_at"]) < datetime.now(timezone.utc):
+            raise ValueError(generic_error)
+
+        password_hash = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        conn.execute("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, row["user_id"]))
+        conn.execute("UPDATE password_resets SET used = 1 WHERE id = ?", (row["id"],))
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def create_access_token(username: str) -> str:

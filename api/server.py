@@ -124,6 +124,15 @@ class SignupRequest(BaseModel):
     password: str
 
 
+class RequestResetRequest(BaseModel):
+    email: str
+
+
+class ConfirmResetRequest(BaseModel):
+    token: str
+    new_password: str
+
+
 class RecentQueryCreate(BaseModel):
     full_query: str
     display_title: str | None = None
@@ -171,6 +180,26 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()) -> dict:
     if not user:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     return {"access_token": auth.create_access_token(user["username"]), "token_type": "bearer"}
+
+
+# Same generic message on every path (email registered or not) — never lets
+# a caller learn whether an email exists in the system.
+_RESET_REQUESTED_MESSAGE = "If that email is registered, a reset link has been sent."
+
+
+@app.post("/api/auth/request-reset")
+def request_reset(req: RequestResetRequest) -> dict:
+    auth.request_password_reset(req.email)
+    return {"detail": _RESET_REQUESTED_MESSAGE}
+
+
+@app.post("/api/auth/confirm-reset")
+def confirm_reset(req: ConfirmResetRequest) -> dict:
+    try:
+        auth.confirm_password_reset(req.token, req.new_password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"detail": "Password updated. You can now log in with your new password."}
 
 
 def _run_or_groq_503(fn, *args):

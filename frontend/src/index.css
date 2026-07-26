@@ -158,6 +158,14 @@ body {
   color: var(--seal-red);
   margin: 0 0 14px;
 }
+.auth-info {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--parchment-dim);
+  text-align: center;
+  margin: 0 0 16px;
+}
 .auth-submit-btn {
   height: 40px;
   border-radius: 10px;
@@ -193,6 +201,7 @@ body {
   color: var(--parchment-dim);
   text-align: center;
   margin-top: 18px;
+  line-height: 1.9;
 }
 .auth-switch-link {
   font: inherit;

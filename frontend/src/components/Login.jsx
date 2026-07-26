@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { API_BASE, setToken } from "../api";
 
-export default function Login({ onLoginSuccess }) {
-  const [mode, setMode] = useState("login"); // "login" | "signup"
+export default function Login({ onLoginSuccess, justResetPassword }) {
+  const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [forgotMessage, setForgotMessage] = useState(null);
 
   // Login/signup happen before a token exists, so they deliberately call
   // fetch() directly rather than apiFetch() — there's nothing to attach
@@ -27,6 +28,30 @@ export default function Login({ onLoginSuccess }) {
     }
     setToken(data.access_token);
     onLoginSuccess();
+  }
+
+  // Deliberately shows the same message on success AND failure — the
+  // backend already returns an identical generic response either way, but
+  // network/parse errors are folded into the same copy here too, so a
+  // failed request can't be distinguished from "email not registered" by
+  // watching this form.
+  async function handleForgotSubmit(e) {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/request-reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      setForgotMessage(data.detail || "If that email is registered, a reset link has been sent.");
+    } catch {
+      setForgotMessage("If that email is registered, a reset link has been sent.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -61,6 +86,49 @@ export default function Login({ onLoginSuccess }) {
   function switchMode(next) {
     setMode(next);
     setError(null);
+    setForgotMessage(null);
+  }
+
+  if (mode === "forgot") {
+    return (
+      <div className="auth-screen">
+        <div className="ambient"></div>
+        <form className="auth-card" onSubmit={handleForgotSubmit}>
+          <div className="auth-wordmark">
+            Reg<em>Verdict</em>
+          </div>
+          <div className="auth-sub">Compliance Copilot</div>
+
+          {forgotMessage ? (
+            <p className="auth-info">{forgotMessage}</p>
+          ) : (
+            <>
+              <div className="auth-field">
+                <label htmlFor="auth-forgot-email">Email</label>
+                <input
+                  id="auth-forgot-email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button className="auth-submit-btn" type="submit" disabled={submitting}>
+                {submitting ? "Please wait…" : "Send reset link"}
+              </button>
+            </>
+          )}
+
+          <div className="auth-switch">
+            <button type="button" className="auth-switch-link" onClick={() => switchMode("login")}>
+              Back to log in
+            </button>
+          </div>
+        </form>
+      </div>
+    );
   }
 
   return (
@@ -71,6 +139,10 @@ export default function Login({ onLoginSuccess }) {
           Reg<em>Verdict</em>
         </div>
         <div className="auth-sub">Compliance Copilot</div>
+
+        {justResetPassword && (
+          <p className="auth-info">Password updated. Log in with your new password.</p>
+        )}
 
         <div className="auth-field">
           <label htmlFor="auth-username">Username</label>
@@ -119,6 +191,10 @@ export default function Login({ onLoginSuccess }) {
         <div className="auth-switch">
           {mode === "login" ? (
             <>
+              <button type="button" className="auth-switch-link" onClick={() => switchMode("forgot")}>
+                Forgot password?
+              </button>
+              <br />
               No account?{" "}
               <button type="button" className="auth-switch-link" onClick={() => switchMode("signup")}>
                 Sign up

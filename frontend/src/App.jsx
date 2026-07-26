@@ -6,6 +6,7 @@ import CompareJurisdictions from "./components/CompareJurisdictions";
 import AuditTrail from "./components/AuditTrail";
 import ClauseGraphView from "./components/ClauseGraphView";
 import Login from "./components/Login";
+import ResetPassword from "./components/ResetPassword";
 import { apiFetch, clearToken, getToken, onUnauthorized } from "./api";
 
 // The API returns snake_case rows straight from SQLite (display_title,
@@ -20,7 +21,18 @@ function normalizeRecentQuery(row) {
   };
 }
 
+// No router in this app — /reset is the one URL-addressable screen (it has
+// to be, since the reset link is a real link printed to the server console),
+// so it's read directly off window.location rather than pulling in a router
+// dependency for a single route.
+function getResetToken() {
+  if (window.location.pathname !== "/reset") return null;
+  return new URLSearchParams(window.location.search).get("token");
+}
+
 export default function App() {
+  const [resetToken, setResetToken] = useState(getResetToken);
+  const [resetJustCompleted, setResetJustCompleted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken());
   const [activeTool, setActiveTool] = useState("workspace");
   const [workspaceResetKey, setWorkspaceResetKey] = useState(0);
@@ -124,8 +136,29 @@ export default function App() {
       .catch((err) => console.error("delete failed:", err));
   }
 
+  if (resetToken) {
+    return (
+      <ResetPassword
+        token={resetToken}
+        onDone={() => {
+          // Clear /reset?token=... from the address bar so a refresh (or
+          // sharing the URL) doesn't re-show the reset form with a token
+          // that's now used up.
+          window.history.replaceState({}, "", "/");
+          setResetToken(null);
+          setResetJustCompleted(true);
+        }}
+      />
+    );
+  }
+
   if (!isAuthenticated) {
-    return <Login onLoginSuccess={() => setIsAuthenticated(true)} />;
+    return (
+      <Login
+        onLoginSuccess={() => setIsAuthenticated(true)}
+        justResetPassword={resetJustCompleted}
+      />
+    );
   }
 
   return (
