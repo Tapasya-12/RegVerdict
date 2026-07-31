@@ -81,6 +81,13 @@ export default function PolicyDiff({ regulators }) {
     }
   }
 
+  function handleTextareaKeyDown(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCompare();
+    }
+  }
+
   return (
     <>
       <div className="chat-header">
@@ -136,6 +143,7 @@ export default function PolicyDiff({ regulators }) {
                 placeholder="e.g. We charge a 2% processing fee on personal loans above ₹5 lakh."
                 value={originalPolicy}
                 onChange={(e) => setOriginalPolicy(e.target.value)}
+                onKeyDown={handleTextareaKeyDown}
                 disabled={comparing}
               />
             </div>
@@ -148,6 +156,7 @@ export default function PolicyDiff({ regulators }) {
                 placeholder="e.g. We charge a 1.5% processing fee on personal loans above ₹5 lakh."
                 value={proposedChange}
                 onChange={(e) => setProposedChange(e.target.value)}
+                onKeyDown={handleTextareaKeyDown}
                 disabled={comparing}
               />
             </div>

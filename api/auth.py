@@ -83,10 +83,21 @@ def init_db():
             display_title TEXT NOT NULL,
             full_query TEXT NOT NULL,
             pinned INTEGER NOT NULL DEFAULT 0,
+            messages TEXT NOT NULL DEFAULT '[]',
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         )
     """)
+    # messages (the full JSON-encoded conversation transcript) was added
+    # after recent_queries already shipped — CREATE TABLE IF NOT EXISTS is a
+    # no-op against a database that already has the table, so on top of
+    # being in the CREATE above (for fresh installs), it also has to be
+    # added out-of-band, once, for existing ones.
+    try:
+        conn.execute("ALTER TABLE recent_queries ADD COLUMN messages TEXT NOT NULL DEFAULT '[]'")
+    except sqlite3.OperationalError as e:
+        if "duplicate column" not in str(e).lower():
+            raise
 
     # token_hash, never the raw token, is what's stored — same reasoning as
     # password_hash: a DB read (backup, leak, insider) shouldn't hand out

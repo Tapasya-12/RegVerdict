@@ -72,7 +72,7 @@ function RecentChatRow({ entry, onSelect, onPinToggle, onRename, onDelete }) {
 
   return (
     <div className="recent-row">
-      <button className="recent-item" title={entry.fullQuery} onClick={() => onSelect(entry.fullQuery)}>
+      <button className="recent-item" title={entry.fullQuery} onClick={() => onSelect(entry)}>
         {entry.displayTitle}
       </button>
       <div className="recent-actions">

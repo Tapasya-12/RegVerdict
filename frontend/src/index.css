@@ -314,10 +314,13 @@ body {
   margin: 16px 0;
 }
 
+/* Column, not row: the title and the Pin/Rename/Delete actions each get
+   their OWN row now, rather than sharing one horizontal row where the
+   actions' reserved width forced the title into single-line truncation. */
 .recent-row {
   display: flex;
-  align-items: center;
-  gap: 2px;
+  flex-direction: column;
+  align-items: stretch;
   border-radius: 7px;
   transition: background 0.15s ease;
 }
@@ -325,7 +328,7 @@ body {
   background: rgba(255, 255, 255, 0.05);
 }
 .recent-item {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   display: block;
   border: none;
@@ -333,14 +336,22 @@ body {
   font-family: "Newsreader", serif;
   font-style: italic;
   font-size: 12.5px;
+  line-height: 1.4;
   color: var(--parchment-dim);
   padding: 8px 10px;
   border-radius: 7px;
   cursor: pointer;
   text-align: left;
-  white-space: nowrap;
+  /* Full title, wrapping to 2 lines rather than a single truncated one —
+     display_title is already capped at 60 chars server-side, so 2 lines is
+     enough room in the vast majority of cases; the clamp is just a backstop
+     against pathological single long words. */
+  white-space: normal;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 .recent-empty {
   font-family: "Newsreader", serif;
@@ -351,22 +362,28 @@ body {
   padding: 8px 10px;
 }
 
-/* Hidden until the row is hovered OR a child receives keyboard focus —
-   opacity (not visibility/display) keeps these in the tab order so
-   keyboard users can reach them even before they're visually revealed. */
+/* A second row below the title, collapsed to zero height until the row is
+   hovered OR a child receives keyboard focus — this is what makes it
+   possible for .recent-item above to use its full width for the title
+   instead of sharing that width with these buttons. max-height (not
+   display/visibility) keeps them in the tab order so keyboard users can
+   reach them even before they're visually revealed. */
 .recent-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-right: 8px;
-  flex-shrink: 0;
+  padding: 0 10px;
+  max-height: 0;
   opacity: 0;
+  overflow: hidden;
   pointer-events: none;
-  transition: opacity 0.15s ease;
+  transition: max-height 0.15s ease, opacity 0.15s ease, padding 0.15s ease;
 }
 .recent-row:hover .recent-actions,
 .recent-row:focus-within .recent-actions {
+  max-height: 28px;
   opacity: 1;
+  padding: 0 10px 6px;
   pointer-events: auto;
 }
 .recent-action {
@@ -397,8 +414,9 @@ body {
   color: var(--seal-red);
 }
 .recent-rename-input {
-  flex: 1;
+  width: 100%;
   min-width: 0;
+  box-sizing: border-box;
   font-family: "Newsreader", serif;
   font-style: italic;
   font-size: 12.5px;

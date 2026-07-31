@@ -79,6 +79,13 @@ export default function CompareJurisdictions({ regulators }) {
     }
   }
 
+  function handleTextareaKeyDown(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCompare();
+    }
+  }
+
   return (
     <>
       <div className="chat-header">
@@ -139,6 +146,7 @@ export default function CompareJurisdictions({ regulators }) {
             placeholder="Describe a business decision or policy…"
             value={policyText}
             onChange={(e) => setPolicyText(e.target.value)}
+            onKeyDown={handleTextareaKeyDown}
             disabled={comparing}
           />
           <button

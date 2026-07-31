@@ -18,6 +18,7 @@ function normalizeRecentQuery(row) {
     displayTitle: row.display_title,
     fullQuery: row.full_query,
     pinned: !!row.pinned,
+    messages: row.messages || [],
   };
 }
 
@@ -37,7 +38,7 @@ export default function App() {
   const [activeTool, setActiveTool] = useState("workspace");
   const [workspaceResetKey, setWorkspaceResetKey] = useState(0);
   const [recentChats, setRecentChats] = useState([]);
-  const [pendingFill, setPendingFill] = useState(null);
+  const [pendingSession, setPendingSession] = useState(null);
   const [indexedChunks, setIndexedChunks] = useState(null);
   const [regulators, setRegulators] = useState([]);
 
@@ -91,18 +92,23 @@ export default function App() {
   }
 
   function handleNewCheck() {
+    // Clears the in-progress session BEFORE the remount below — otherwise
+    // Workspace would mount fresh (via the key change) but its restore
+    // effect would immediately re-fire against the still-set pendingSession
+    // from whatever was last opened, undoing the "new check" the user asked for.
+    setPendingSession(null);
     setWorkspaceResetKey((k) => k + 1);
   }
 
   function handleQuerySubmitted() {
-    // check_compliance already wrote the recent-query row server-side (that's
-    // the whole point of centralizing this) — just pull the fresh list.
+    // check_compliance already wrote/updated the session's row server-side
+    // (that's the whole point of centralizing this) — just pull the fresh list.
     refreshRecentQueries();
   }
 
-  function handleSelectRecent(fullQuery) {
+  function handleSelectRecent(entry) {
     if (activeTool !== "workspace") setActiveTool("workspace");
-    setPendingFill({ text: fullQuery, nonce: Date.now() });
+    setPendingSession({ sessionId: entry.id, messages: entry.messages, nonce: Date.now() });
   }
 
   function handlePinToggle(id) {
@@ -183,7 +189,7 @@ export default function App() {
             key={workspaceResetKey}
             indexedChunks={indexedChunks}
             regulators={regulators}
-            pendingFill={pendingFill}
+            pendingSession={pendingSession}
             onQuerySubmitted={handleQuerySubmitted}
           />
         )}

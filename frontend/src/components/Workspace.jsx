@@ -20,21 +20,48 @@ const CHIPS = [
 
 let nextMessageId = 0;
 
-export default function Workspace({ indexedChunks, regulators, pendingFill, onQuerySubmitted }) {
+// Converts a session's stored [{role, content, timestamp}, ...] transcript
+// (as returned by GET /api/recent_queries) into the {id, role, text} /
+// {id, role, result, policyText} shape this component renders. An assistant
+// entry's policyText is whatever the immediately preceding user message
+// said — that's the same text check_compliance was originally run against,
+// needed for "Export as Word" to re-run the report on a restored session.
+function hydrateMessages(sessionMessages) {
+  return sessionMessages.map((m, i) => {
+    if (m.role === "user") {
+      return { id: nextMessageId++, role: "user", text: m.content };
+    }
+    const prev = sessionMessages[i - 1];
+    return {
+      id: nextMessageId++,
+      role: "assistant",
+      result: m.content,
+      policyText: prev?.role === "user" ? prev.content : null,
+    };
+  });
+}
+
+export default function Workspace({ indexedChunks, regulators, pendingSession, onQuerySubmitted }) {
   const [messages, setMessages] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
   const [policyText, setPolicyText] = useState("");
   const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState(null);
 
   const threadRef = useRef(null);
-  const lastFillNonce = useRef(null);
+  const lastSessionNonce = useRef(null);
 
+  // Restoring a sidebar entry: load its saved transcript wholesale and adopt
+  // its id as the current session, so the NEXT submission appends to this
+  // same conversation instead of starting a new sidebar row.
   useEffect(() => {
-    if (pendingFill && pendingFill.nonce !== lastFillNonce.current) {
-      lastFillNonce.current = pendingFill.nonce;
-      setPolicyText(pendingFill.text);
+    if (pendingSession && pendingSession.nonce !== lastSessionNonce.current) {
+      lastSessionNonce.current = pendingSession.nonce;
+      setSessionId(pendingSession.sessionId);
+      setMessages(hydrateMessages(pendingSession.messages));
+      setPolicyText("");
     }
-  }, [pendingFill]);
+  }, [pendingSession]);
 
   useEffect(() => {
     const el = threadRef.current;
@@ -54,12 +81,13 @@ export default function Workspace({ indexedChunks, regulators, pendingFill, onQu
       const res = await apiFetch("/api/check_compliance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ policy_text: text }),
+        body: JSON.stringify({ policy_text: text, session_id: sessionId }),
       });
       if (!res.ok) {
         throw new Error(`API returned ${res.status}`);
       }
-      const result = await res.json();
+      const { session_id, ...result } = await res.json();
+      setSessionId(session_id);
       setMessages((prev) => [...prev, { id: nextMessageId++, role: "assistant", result, policyText: text }]);
       onQuerySubmitted?.(text);
     } catch (err) {
@@ -67,6 +95,13 @@ export default function Workspace({ indexedChunks, regulators, pendingFill, onQu
       setError("Could not reach the compliance engine — check that the backend is running.");
     } finally {
       setReviewing(false);
+    }
+  }
+
+  function handleTextareaKeyDown(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   }
 
@@ -116,6 +151,7 @@ export default function Workspace({ indexedChunks, regulators, pendingFill, onQu
             placeholder="Describe a business decision or policy…"
             value={policyText}
             onChange={(e) => setPolicyText(e.target.value)}
+            onKeyDown={handleTextareaKeyDown}
             disabled={reviewing}
           />
           <button className="send-btn" onClick={handleSend} disabled={reviewing || !policyText.trim()}>

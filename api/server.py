@@ -144,6 +144,7 @@ class RecentQueryRename(BaseModel):
 
 class CheckComplianceRequest(BaseModel):
     policy_text: str
+    session_id: int | None = None
 
 
 class SimulatePolicyChangeRequest(BaseModel):
@@ -269,10 +270,20 @@ def check_compliance(
     # This endpoint is only ever called from the Workspace tool (Policy Diff
     # and Compare Jurisdictions call tools.check_compliance() directly as a
     # Python function via their own endpoints, not this route) — so every
-    # hit here is a real Workspace submission that belongs in the sidebar.
-    recent_queries.create_recent_query(auth.DB_PATH, user_id, req.policy_text)
+    # hit here belongs in the sidebar as part of a conversation SESSION, not
+    # a one-off row. session_id absent/unrecognized -> start a new session;
+    # present and valid -> append this turn to that same session instead of
+    # fragmenting one conversation across multiple sidebar entries.
+    session_id = req.session_id
+    if session_id is not None:
+        try:
+            recent_queries.append_turn(auth.DB_PATH, session_id, user_id, req.policy_text, result)
+        except ValueError:
+            session_id = None  # session was deleted / not owned — fall through to start a fresh one
+    if session_id is None:
+        session_id = recent_queries.create_session(auth.DB_PATH, user_id, req.policy_text, result)
 
-    return result
+    return {**result, "session_id": session_id}
 
 
 @app.post("/api/simulate_policy_change")

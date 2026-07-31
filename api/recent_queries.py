@@ -5,8 +5,61 @@ person's history follows them across devices/browsers instead of living only
 in whichever browser they first used.
 """
 
+import json
 import sqlite3
 from datetime import datetime, timezone
+
+
+def create_session(db_path, user_id: int, user_text: str, assistant_result: dict, display_title: str = None) -> int:
+    """Starts a new sidebar entry representing one conversation session,
+    seeded with its first user/assistant turn. display_title is fixed here,
+    from this FIRST query only — append_turn() below never touches it, so
+    later turns in the same session don't rename it out from under the user."""
+    if display_title is None:
+        display_title = user_text[:60] + ("…" if len(user_text) > 60 else "")
+
+    now = datetime.now(timezone.utc).isoformat()
+    messages = [
+        {"role": "user", "content": user_text, "timestamp": now},
+        {"role": "assistant", "content": assistant_result, "timestamp": now},
+    ]
+
+    conn = sqlite3.connect(db_path)
+    conn.execute("PRAGMA foreign_keys = ON")
+    cursor = conn.execute(
+        """INSERT INTO recent_queries (user_id, display_title, full_query, pinned, messages, created_at, updated_at)
+           VALUES (?, ?, ?, 0, ?, ?, ?)""",
+        (user_id, display_title, user_text, json.dumps(messages), now, now),
+    )
+    conn.commit()
+    session_id = cursor.lastrowid
+    conn.close()
+    return session_id
+
+
+def append_turn(db_path, session_id: int, user_id: int, user_text: str, assistant_result: dict) -> None:
+    """Appends one user+assistant turn to an EXISTING session — never
+    creates a new sidebar row, which is the whole point: every query
+    submitted in the same ongoing conversation lands in the same entry.
+    Raises ValueError if the session doesn't exist or belongs to someone
+    else, same ownership guard as toggle_pin/rename_query/delete_query below."""
+    conn = sqlite3.connect(db_path)
+    existing = _get_owned_query(conn, session_id, user_id)
+    if not existing:
+        conn.close()
+        raise ValueError("Session not found or does not belong to this user.")
+
+    now = datetime.now(timezone.utc).isoformat()
+    messages = json.loads(existing["messages"] or "[]")
+    messages.append({"role": "user", "content": user_text, "timestamp": now})
+    messages.append({"role": "assistant", "content": assistant_result, "timestamp": now})
+
+    conn.execute(
+        "UPDATE recent_queries SET messages = ?, updated_at = ? WHERE id = ?",
+        (json.dumps(messages), now, session_id),
+    )
+    conn.commit()
+    conn.close()
 
 
 def create_recent_query(db_path, user_id: int, full_query: str, display_title: str = None) -> dict:
@@ -40,7 +93,14 @@ def list_recent_queries(db_path, user_id: int) -> list[dict]:
         (user_id,),
     ).fetchall()
     conn.close()
-    return [dict(r) for r in rows]
+    results = []
+    for r in rows:
+        d = dict(r)
+        # Stored as a JSON TEXT column — decode once here so the API
+        # response carries a real array, not a double-encoded string.
+        d["messages"] = json.loads(d.get("messages") or "[]")
+        results.append(d)
+    return results
 
 
 def _get_owned_query(conn, query_id: int, user_id: int) -> dict | None:
