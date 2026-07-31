@@ -65,24 +65,24 @@ export default function AssistantBubble({ result, policyText }) {
           </p>
         )}
         <div className="assistant-footer">
-          <div className="grounding-note">
-            <span
-              className="dot"
-              style={!result.grounding_verified ? { background: "var(--seal-red)" } : undefined}
-            ></span>
-            {result.grounding_note ||
-              (result.grounding_verified
-                ? "Verified verbatim against source clause"
-                : "No retrieved chunk could ground this claim.")}
-          </div>
-          <div className="assistant-footer-actions">
+          <div className="assistant-footer-left">
+            <div className="grounding-note">
+              <span
+                className="dot"
+                style={!result.grounding_verified ? { background: "var(--seal-red)" } : undefined}
+              ></span>
+              {result.grounding_note ||
+                (result.grounding_verified
+                  ? "Verified verbatim against source clause"
+                  : "No retrieved chunk could ground this claim.")}
+            </div>
             {policyText && (
-              <button className="export-docx-btn" onClick={handleExport} disabled={exporting}>
+              <button className="export-link-btn" onClick={handleExport} disabled={exporting}>
                 {exporting ? "Exporting…" : "Export as Word"}
               </button>
             )}
-            <span className={`stamp ${stampClass}`}>{result.verdict}</span>
           </div>
+          <span className={`stamp ${stampClass}`}>{result.verdict}</span>
         </div>
       </div>
     </div>
