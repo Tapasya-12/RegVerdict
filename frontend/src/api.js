@@ -28,6 +28,25 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+// The JWT's own "sub" claim already carries the username (see
+// auth.create_access_token) — decoded here for the sidebar's at-rest
+// profile-trigger label so it doesn't need a network round trip just to
+// show a name. Decodes the payload only, without verifying the signature —
+// fine for display purposes since the token already came from our own
+// login flow; anything security-sensitive still goes through the server's
+// real verification on every request.
+export function getUsernameFromToken() {
+  const token = getToken();
+  if (!token) return null;
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return decoded.sub || null;
+  } catch {
+    return null;
+  }
+}
+
 let unauthorizedHandler = () => {};
 
 // App.jsx registers its "kick back to login" callback here once, at mount.
@@ -48,6 +67,28 @@ export async function apiFetch(path, options = {}) {
   }
 
   return res;
+}
+
+// Fetches { username, email, created_at, total_checks } for the profile panel.
+export async function fetchMe() {
+  const res = await apiFetch("/api/me");
+  if (!res.ok) throw new Error(`api/me returned ${res.status}`);
+  return res.json();
+}
+
+// Throws with the server's actual message (e.g. "Current password is
+// incorrect.") on failure so the profile panel's form can show it verbatim.
+export async function changePassword(currentPassword, newPassword) {
+  const res = await apiFetch("/api/auth/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `change-password returned ${res.status}`);
+  }
+  return res.json();
 }
 
 // Re-runs the compliance report fresh server-side (POST /api/export_report)

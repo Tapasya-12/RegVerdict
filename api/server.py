@@ -133,6 +133,11 @@ class ConfirmResetRequest(BaseModel):
     new_password: str
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
 class RecentQueryCreate(BaseModel):
     full_query: str
     display_title: str | None = None
@@ -201,6 +206,34 @@ def confirm_reset(req: ConfirmResetRequest) -> dict:
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"detail": "Password updated. You can now log in with your new password."}
+
+
+@app.get("/api/me")
+def me(current_user: str = Depends(get_current_user)) -> dict:
+    # The JWT payload only carries the username (see auth.create_access_token) —
+    # this is the one endpoint the sidebar's profile panel needs for
+    # everything else about the account: email and created_at are never
+    # decoded client-side, and total_checks is a real COUNT(*) against this
+    # user's own audit_log rows, not a guess.
+    user = auth.get_user_by_username(current_user)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+    total_checks = audit_log_sqlite.count_by_user_id(auth.DB_PATH, user["id"])
+    return {
+        "username": user["username"],
+        "email": user["email"],
+        "created_at": user["created_at"],
+        "total_checks": total_checks,
+    }
+
+
+@app.post("/api/auth/change-password")
+def change_password(req: ChangePasswordRequest, user_id: int = Depends(get_current_user_id)) -> dict:
+    try:
+        auth.change_password(user_id, req.current_password, req.new_password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"detail": "Password updated."}
 
 
 def _run_or_groq_503(fn, *args):
@@ -545,3 +578,9 @@ def delete_recent_query_endpoint(query_id: int, user_id: int = Depends(get_curre
     if not deleted:
         raise HTTPException(status_code=404, detail="Query not found or does not belong to this user.")
     return {"deleted": True}
+
+
+@app.delete("/api/recent_queries")
+def clear_recent_queries_endpoint(user_id: int = Depends(get_current_user_id)) -> dict:
+    deleted_count = recent_queries.clear_all(auth.DB_PATH, user_id)
+    return {"deleted_count": deleted_count}

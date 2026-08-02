@@ -41,10 +41,9 @@ export default function ResetPassword({ token, onDone }) {
 
   return (
     <div className="auth-screen">
-      <div className="ambient"></div>
       <form className="auth-card" onSubmit={handleSubmit}>
         <div className="auth-wordmark">
-          Reg<em>Verdict</em>
+          Reg<span>Verdict</span>
         </div>
         <div className="auth-sub">Set a new password</div>
 

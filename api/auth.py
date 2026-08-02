@@ -256,6 +256,29 @@ def confirm_password_reset(token: str, new_password: str) -> None:
         conn.close()
 
 
+def change_password(user_id: int, current_password: str, new_password: str) -> None:
+    """Direct in-session password change — the user is already authenticated,
+    so this just re-verifies the current password as proof of ownership
+    rather than round-tripping through the email-reset-token flow. Raises
+    ValueError with a user-facing message on a wrong current password or a
+    new password that's too weak."""
+    if len(new_password) < 8:
+        raise ValueError("New password must be at least 8 characters.")
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row or not bcrypt.checkpw(current_password.encode("utf-8"), row["password_hash"].encode("utf-8")):
+            raise ValueError("Current password is incorrect.")
+
+        password_hash = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        conn.execute("UPDATE users SET password_hash = ? WHERE id = ?", (password_hash, user_id))
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def create_access_token(username: str) -> str:
     _require_secret()
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

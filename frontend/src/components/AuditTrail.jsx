@@ -48,7 +48,7 @@ function VerdictCell({ verdict }) {
   return <span className={`verdict-badge ${STAMP_CLASS_BY_VERDICT[verdict] || "review"}`}>{verdict}</span>;
 }
 
-const CSV_COLUMNS = ["timestamp", "user", "tool", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
+const CSV_COLUMNS = ["timestamp", "username", "tool", "policy_text", "verdict", "confidence", "document_name", "clause_number", "grounding_verified"];
 
 function toCSV(rows) {
   const escape = (value) => {
@@ -190,7 +190,7 @@ export default function AuditTrail() {
               {records.map((r) => (
                 <tr key={r.id}>
                   <td className="audit-mono">{formatTimestamp(r.timestamp)}</td>
-                  <td className="audit-mono">{r.user || "—"}</td>
+                  <td className="audit-mono">{r.username || "—"}</td>
                   <td className="audit-mono">{r.tool || "—"}</td>
                   <td title={r.policy_text}>{truncate(r.policy_text)}</td>
                   <td>

@@ -157,6 +157,18 @@ def rename_query(db_path, query_id: int, user_id: int, new_title: str) -> dict:
     return existing
 
 
+def clear_all(db_path, user_id: int) -> int:
+    """Deletes every recent_queries row for this user — the "Clear
+    conversation history" settings action. Returns the number of rows
+    deleted so the caller/UI can confirm something actually happened."""
+    conn = sqlite3.connect(db_path)
+    cursor = conn.execute("DELETE FROM recent_queries WHERE user_id = ?", (user_id,))
+    conn.commit()
+    deleted = cursor.rowcount
+    conn.close()
+    return deleted
+
+
 def delete_query(db_path, query_id: int, user_id: int) -> bool:
     conn = sqlite3.connect(db_path)
     existing = _get_owned_query(conn, query_id, user_id)

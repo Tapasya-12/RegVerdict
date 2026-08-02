@@ -3,59 +3,45 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   FINAL LOCKED DESIGN — ported 1:1 from regverdict_final_locked.html. No
-   more iteration on colors/fonts/glass intensity past this point.
+   JURISDICTION-CODED DESIGN — ported from regverdict_jurisdiction_final.html
+   (a refinement of the earlier regverdict_jurisdiction_coded.html draft: a
+   jurisdiction-1 color swap, a subtle ambient radial-gradient wash on the
+   body, and gradient-filled primary buttons/stamp — see the diff between
+   the two reference files for the exact deltas). Flat panels, no
+   backdrop-filter blur — the signature idea here is that a citation tag's
+   COLOR carries real information (which regulator it's from), so nothing
+   else competes for chromatic attention.
 
-   This superseded two earlier in-repo experiments: regverdict_v4_splitflap
-   (the mechanical split-flap verdict reveal, off-white #dcdee4 text, solid
-   navy/kraft surfaces) and a heavier-glass variant. The split-flap component
-   is gone — verdicts now render as a single static rotated .stamp, no
-   animation. Primary text is pure white (#FFFFFF), and every major surface
-   (sidebar, chat-header, message bubbles, trace box, chip, input bar) is
-   translucent + backdrop-blurred instead of solid.
-
-   Audit Trail / Clause Graph's panel surfaces (.audit-table-wrap,
-   .clause-graph-canvas, .clause-detail, etc.) are NOT covered by the locked
-   file — it's a Workspace-only mockup — so they keep their existing solid
-   var(--kraft) backgrounds unchanged. They still pick up the brighter
-   --ink-text/--parchment automatically since those are shared tokens.
-
-   .exhibit-tab and @keyframes fade-up are the one holdover from the older
-   regverdict_design_prototype.html design system — Clause Graph's
-   clause-detail side panel still uses that exact pill treatment.
+   Jurisdiction palette is a SCALABLE 4-slot system (j1..j4), assigned
+   positionally by frontend/src/jurisdiction.js from the real, sorted
+   regulator list — never hardcoded to a specific regulator. Verdict/status
+   colors (green/red/amber + a 4th "violet" for Conflicting Regulations,
+   since the real API has 4 verdict states and the reference only sketched
+   3) are a functionally separate palette, never reused for a jurisdiction
+   slot or vice versa.
    ========================================================================== */
 
 :root {
-  --ink-navy: #181a1f;
-  --ink-navy-deep: #101216;
-  --sidebar-navy: #101216;
-  --parchment: #ffffff;
-  /* Nudged from #7a8290 — measured 4.20:1 against the auth-card background
-     (rgb(30,32,39)), just under WCAG AA's 4.5:1 for normal text, confirmed
-     via real rendered-pixel sampling, not just the raw hex math. This value
-     clears 4.68:1 there with margin to spare, and only shifts each channel
-     +8/255 (~3%) — not a visual redesign, a correction to a confirmed
-     accessibility failure in the (otherwise unchanged) locked palette. */
-  --parchment-dim: #828a98;
-  --kraft: #22252c;
-  --kraft-shadow: #343841;
-  --ink-text: #ffffff;
-  --ink-text-soft: #8a93a0;
-  --seal-green: #5fa88a;
-  /* Nudged from #c46e7a — measured 4.28:1 as the Audit Trail verdict-badge
-     text color against --kraft (lighter than the chat-bubble backgrounds
-     the same color also renders against, where it already passed at
-     4.55:1) — a real, confirmed AA failure specific to that context. +8/255
-     clears 4.73:1 there. */
-  --seal-red: #cc7682;
-  --gazette-gold: #9c87d4;
-  --stamp-review: #b79a5d;
-  /* Nudged from #8a5a82 — measured 3.08:1 as the Compare Jurisdictions
-     disagreement banner text against --kraft, a significant, confirmed AA
-     failure (not borderline like the others). +32/255 clears 4.80:1. */
-  --archive-plum: #aa7aa2;
-  --highlighter: rgba(156, 135, 212, 0.16);
-  --user-bubble: #282b33;
+  --ink-base: #131515;
+  --panel: #1c1f1e;
+  --panel-2: #262a28;
+  --text-primary: #edefec;
+  --text-soft: #8a9088;
+  --border: rgba(237, 239, 236, 0.08);
+
+  --jurisdiction-1: #c4788f;
+  --jurisdiction-2: #4a8fa3;
+  --jurisdiction-3: #8c6fb0;
+  --jurisdiction-4: #7fa36e;
+
+  --status-green: #5ca97e;
+  --status-red: #c4634f;
+  --status-amber: #c4954a;
+  /* 4th verdict color for "Conflicting Regulations" — the real Verdict enum
+     has 4 states, the reference sketch only ever showed 3 (green/red/amber).
+     Deliberately not reused from the jurisdiction palette so a conflict
+     stamp is never mistaken for "this is jurisdiction 3's citation." */
+  --status-violet: #b0709e;
 }
 
 * {
@@ -65,65 +51,57 @@ body {
   margin: 0;
   height: 100vh;
   display: flex;
-  background: var(--ink-navy);
-  font-family: "Newsreader", serif;
-  color: var(--parchment);
   overflow: hidden;
+  font-family: "Sora", sans-serif;
+  color: var(--text-primary);
+  position: relative;
+  background: radial-gradient(ellipse 900px 700px at 10% -10%, color-mix(in srgb, var(--jurisdiction-1) 10%, transparent), transparent 55%),
+    radial-gradient(ellipse 800px 700px at 100% 30%, color-mix(in srgb, var(--jurisdiction-2) 9%, transparent), transparent 60%),
+    radial-gradient(ellipse 700px 600px at 40% 110%, color-mix(in srgb, var(--jurisdiction-3) 7%, transparent), transparent 60%),
+    var(--ink-base);
 }
-/* React mounts into #root, which sits between <body> and the sidebar/main —
-   the source markup assumes .sidebar/.main are direct flex children of
-   <body>. display:contents removes #root from the box tree so that still
-   holds true. */
 #root {
   display: contents;
 }
+a {
+  color: inherit;
+}
 
-/* ================= AUTH SCREEN =================
-   Reuses the same card/glass/token language as the chat bubbles and input
-   bar (.bubble-assistant's background+border+shadow, .input-bar's field
-   treatment, .send-btn's button) rather than inventing a new visual style
-   for login/signup. */
+/* ================= AUTH SCREENS (Login / Signup / Forgot / Reset) ================= */
 .auth-screen {
   flex: 1;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 1;
 }
 .auth-card {
-  position: relative;
-  z-index: 1;
-  width: 340px;
-  background: rgba(30, 33, 40, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 30px 28px 26px;
-  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.4);
+  width: 360px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 30px 28px;
   display: flex;
   flex-direction: column;
 }
 .auth-wordmark {
-  font-family: "Fraunces", serif;
-  font-style: italic;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 26px;
-  color: var(--parchment);
   text-align: center;
 }
-.auth-wordmark em {
-  color: var(--gazette-gold);
-  font-style: italic;
+.auth-wordmark span {
+  background: linear-gradient(90deg, var(--jurisdiction-1), var(--jurisdiction-2), var(--jurisdiction-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .auth-sub {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   text-align: center;
-  margin: 4px 0 24px;
+  margin: 5px 0 24px;
 }
 .auth-field {
   display: flex;
@@ -132,49 +110,47 @@ body {
   margin-bottom: 14px;
 }
 .auth-field label {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
 }
 .auth-field input {
-  font-family: "Newsreader", serif;
-  font-size: 15px;
-  color: var(--ink-text);
-  background: rgba(34, 37, 44, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
+  font-family: "Sora", sans-serif;
+  font-size: 14.5px;
+  color: var(--text-primary);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
   padding: 10px 14px;
   outline: none;
   transition: border-color 0.2s ease;
 }
 .auth-field input:focus {
-  border-color: var(--gazette-gold);
+  border-color: var(--text-primary);
 }
 .auth-error {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
-  color: var(--seal-red);
+  color: var(--status-red);
   margin: 0 0 14px;
 }
 .auth-info {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   text-align: center;
   margin: 0 0 16px;
 }
 .auth-submit-btn {
   height: 40px;
   border-radius: 10px;
-  background: var(--gazette-gold);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
   border: none;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Sora", sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  color: #12141a;
+  font-weight: 700;
+  color: var(--ink-base);
   cursor: pointer;
   transition: filter 0.15s ease, transform 0.15s ease;
 }
@@ -189,78 +165,70 @@ body {
   cursor: not-allowed;
   opacity: 0.6;
 }
-.auth-field input:focus-visible,
-.auth-submit-btn:focus-visible,
-.auth-switch-link:focus-visible {
-  outline: 2px solid var(--gazette-gold);
-  outline-offset: 2px;
-}
 .auth-switch {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   text-align: center;
   margin-top: 18px;
   line-height: 1.9;
 }
 .auth-switch-link {
   font: inherit;
-  color: var(--gazette-gold);
+  font-weight: 600;
+  color: var(--text-primary);
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   text-decoration: underline;
 }
+.auth-field input:focus-visible,
+.auth-submit-btn:focus-visible,
+.auth-switch-link:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
 
 /* ================= SIDEBAR ================= */
 .sidebar {
   width: 264px;
   flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-  background: rgba(20, 22, 28, 0.85);
-  backdrop-filter: blur(10px) saturate(140%);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 22px 16px;
   display: flex;
   flex-direction: column;
-  padding: 22px 16px;
 }
-.side-wordmark {
-  font-family: "Fraunces", serif;
-  font-style: italic;
-  font-weight: 900;
-  font-size: 24px;
-  color: var(--parchment);
+.wordmark {
+  font-weight: 800;
+  font-size: 22px;
   margin: 4px 0 4px 6px;
 }
-.side-wordmark em {
-  color: var(--gazette-gold);
-  font-style: italic;
+.wordmark span {
+  background: linear-gradient(90deg, var(--jurisdiction-1), var(--jurisdiction-2), var(--jurisdiction-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .side-sub {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   margin: 0 0 22px 6px;
 }
 .new-check-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
   font-size: 13px;
-  font-weight: 600;
-  color: #12141a;
-  background: var(--gazette-gold);
+  color: var(--ink-base);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
   border: none;
-  border-radius: 8px;
-  padding: 10px 14px;
+  border-radius: 9px;
+  padding: 11px 14px;
+  width: 100%;
   cursor: pointer;
   margin-bottom: 22px;
+  font-family: "Sora", sans-serif;
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 .new-check-btn:hover {
@@ -270,62 +238,66 @@ body {
 .new-check-btn:active {
   transform: translateY(0) scale(0.98);
 }
-
 .nav-label {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
-  margin: 4px 0 8px 8px;
+  color: var(--text-soft);
+  opacity: 0.75;
+  margin: 6px 0 8px 8px;
 }
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: block;
   width: 100%;
   border: none;
   background: none;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Sora", sans-serif;
   font-size: 13.5px;
-  color: var(--parchment-dim);
+  font-weight: 500;
+  color: var(--text-soft);
   padding: 9px 10px;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
   margin-bottom: 2px;
   text-align: left;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--parchment);
+  background: var(--panel-2);
+  color: var(--text-primary);
 }
 .nav-item.active {
-  background: rgba(156, 135, 212, 0.14);
-  color: var(--gazette-gold);
-}
-.nav-icon {
-  display: none;
+  background: var(--panel-2);
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .sidebar-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  margin: 16px 0;
+  background: var(--border);
+  margin: 14px 0;
 }
 
-/* Column, not row: the title and the Pin/Rename/Delete actions each get
-   their OWN row now, rather than sharing one horizontal row where the
-   actions' reserved width forced the title into single-line truncation. */
+/* Pinned + Recent both live in here so they scroll together, independent
+   of the fixed header (wordmark/New check/Tools) above and the footer
+   (jurisdiction key/clause count/log out) below — flex:1 + min-height:0 is
+   the standard flexbox trick to let a child shrink below its content size
+   and actually scroll instead of just pushing everything else off-screen. */
+.recent-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .recent-row {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border-radius: 7px;
+  border-radius: 8px;
   transition: background 0.15s ease;
 }
 .recent-row:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--panel-2);
 }
 .recent-item {
   width: 100%;
@@ -333,41 +305,24 @@ body {
   display: block;
   border: none;
   background: none;
-  font-family: "Newsreader", serif;
-  font-style: italic;
+  font-family: "Sora", sans-serif;
   font-size: 12.5px;
   line-height: 1.4;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   padding: 8px 10px;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: left;
-  /* Full title, wrapping to 2 lines rather than a single truncated one —
-     display_title is already capped at 60 chars server-side, so 2 lines is
-     enough room in the vast majority of cases; the clamp is just a backstop
-     against pathological single long words. */
-  white-space: normal;
-  word-break: break-word;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .recent-empty {
-  font-family: "Newsreader", serif;
-  font-style: italic;
   font-size: 12.5px;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   opacity: 0.6;
   padding: 8px 10px;
 }
-
-/* A second row below the title, collapsed to zero height until the row is
-   hovered OR a child receives keyboard focus — this is what makes it
-   possible for .recent-item above to use its full width for the title
-   instead of sharing that width with these buttons. max-height (not
-   display/visibility) keeps them in the tab order so keyboard users can
-   reach them even before they're visually revealed. */
 .recent-actions {
   display: flex;
   align-items: center;
@@ -387,12 +342,11 @@ body {
   pointer-events: auto;
 }
 .recent-action {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   background: none;
   border: none;
   padding: 3px 1px;
@@ -401,106 +355,368 @@ body {
   transition: color 0.15s ease;
 }
 .recent-action:hover {
-  color: var(--gazette-gold);
+  color: var(--text-primary);
 }
-/* Extra margin + a divider, not just gap, so Delete isn't a mis-click away
-   from Pin/Rename. */
 .recent-action-delete {
   margin-left: 6px;
   padding-left: 9px;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid var(--border);
 }
 .recent-action-delete:hover {
-  color: var(--seal-red);
+  color: var(--status-red);
 }
 .recent-rename-input {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  font-family: "Newsreader", serif;
-  font-style: italic;
+  font-family: "Sora", sans-serif;
   font-size: 12.5px;
-  color: var(--parchment);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--gazette-gold);
-  border-radius: 7px;
+  color: var(--text-primary);
+  background: var(--panel-2);
+  border: 1px solid var(--text-primary);
+  border-radius: 8px;
   padding: 7px 9px;
   outline: none;
 }
 
-.sidebar-footer {
-  margin-top: auto;
-  font-family: "Space Grotesk", sans-serif;
+/* Real jurisdiction key — one row per REAL regulator (not hardcoded), built
+   from the same regulators[] + jurisdiction.js mapping that colors the
+   citation tags, so the legend can never drift out of sync with what's
+   actually indexed. */
+.jurisdiction-key {
+  flex-shrink: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
   font-size: 10.5px;
-  color: var(--parchment-dim);
-  padding: 10px 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-soft);
+}
+.key-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.key-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.key-dot.j1 {
+  background: var(--jurisdiction-1);
+}
+.key-dot.j2 {
+  background: var(--jurisdiction-2);
+}
+.key-dot.j3 {
+  background: var(--jurisdiction-3);
+}
+.key-dot.j4 {
+  background: var(--jurisdiction-4);
+}
+.jurisdiction-key-count {
+  margin-top: 6px;
 }
 
-/* ================= MAIN CHAT AREA ================= */
+/* Sidebar footer's user row — the one entry point into the profile panel,
+   which is in turn the one place Log out and Change password live. No
+   second/standalone logout button anywhere else, so there's never a case
+   of two logout controls doing subtly different things. */
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 6px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+.profile-trigger:hover {
+  background: var(--panel-2);
+}
+.profile-avatar {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Sora", sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-base);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+}
+.profile-username {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ---- profile modal ---- */
+.profile-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.profile-modal {
+  width: 100%;
+  max-width: 360px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.profile-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.profile-modal-close {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 13px;
+}
+.profile-modal-close:hover {
+  color: var(--text-primary);
+}
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.profile-avatar-lg {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-base);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+}
+.profile-identity-text {
+  min-width: 0;
+}
+.profile-username-lg {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-email {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.profile-stat {
+  flex: 1;
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.profile-stat-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.profile-stat-value {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.profile-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+.profile-link-btn {
+  font-family: "Sora", sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.profile-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-input {
+  font-family: "Sora", sans-serif;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.profile-input:focus {
+  border-color: var(--text-primary);
+}
+.profile-password-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+.profile-submit-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+  border: none;
+  font-family: "Sora", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-base);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.profile-submit-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.profile-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.profile-success {
+  font-size: 12px;
+  color: var(--status-green);
+  margin: 10px 0 0;
+}
+.profile-logout-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+.profile-logout-btn:hover {
+  color: var(--status-red);
+}
+
+/* Mobile hamburger top bar + slide-out drawer — no visual precedent in the
+   reference (a single fixed-width desktop mockup), but the earlier
+   accessibility pass found real bugs here worth carrying forward: a fixed
+   264px sidebar alone consumes the majority of a ~400px viewport, and a
+   transform-hidden drawer's contents stay in the tab order unless
+   explicitly removed via `inert`. */
+.mobile-topbar {
+  display: none;
+}
+.mobile-backdrop {
+  display: none;
+}
+.sidebar-close-btn {
+  display: none;
+}
+
+/* ================= MAIN CHAT/PANEL AREA ================= */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  position: relative;
-  z-index: 1;
-}
-.ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(ellipse 1100px 700px at 15% -5%, rgba(156, 135, 212, 0.18), transparent 55%),
-    radial-gradient(ellipse 900px 700px at 95% 100%, rgba(95, 168, 138, 0.12), transparent 60%),
-    radial-gradient(ellipse 600px 500px at 60% 40%, rgba(196, 110, 122, 0.07), transparent 60%);
 }
 .chat-header {
-  padding: 16px 32px;
-  background: rgba(22, 24, 30, 0.85);
-  backdrop-filter: blur(8px) saturate(140%);
-  -webkit-backdrop-filter: blur(8px) saturate(140%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
-  z-index: 1;
 }
 .chat-header-title {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--parchment);
+  font-weight: 700;
+  font-size: 16px;
 }
 .chat-header-sub {
-  font-family: "Newsreader", serif;
-  font-style: italic;
   font-size: 12.5px;
-  color: var(--parchment-dim);
-  margin-top: 2px;
+  color: var(--text-soft);
+  margin-top: 3px;
 }
 .corpus-pill {
   font-family: "IBM Plex Mono", monospace;
   font-size: 10.5px;
-  color: var(--parchment-dim);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-soft);
+  border: 1px solid var(--border);
   padding: 5px 10px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
 .chat-thread {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px 16px;
+  padding: 16px 32px 16px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  position: relative;
-  z-index: 1;
 }
 
-/* ---- user message bubble ---- */
 .msg-row {
   display: flex;
 }
@@ -511,71 +727,91 @@ body {
   justify-content: flex-start;
 }
 .bubble-user {
-  max-width: 64%;
-  background: rgba(40, 43, 51, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--ink-text);
-  font-family: "Newsreader", serif;
-  font-size: 15.5px;
+  max-width: 62%;
+  background: var(--panel-2);
+  color: var(--text-primary);
+  font-size: 15px;
   line-height: 1.55;
   padding: 13px 18px;
   border-radius: 16px 16px 4px 16px;
 }
 
-/* ---- assistant message: verdict card, reframed as a chat bubble ---- */
 .bubble-assistant {
   max-width: 78%;
-  background: rgba(30, 33, 40, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 4px 16px 16px 16px;
   overflow: hidden;
-  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.4);
 }
+
+/* THE SIGNATURE: this tag's color IS the information — which regulator
+   this citation comes from — not a decorative accent chosen for mood. */
 .assistant-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 16px;
-  background: rgba(16, 18, 22, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-.avatar {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  background: var(--gazette-gold);
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: "Fraunces", serif;
-  font-style: italic;
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--ink-navy-deep);
+  gap: 10px;
+}
+.assistant-head.j1 {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--jurisdiction-1) 16%, transparent), transparent);
+  border-bottom: 2px solid var(--jurisdiction-1);
+}
+.assistant-head.j2 {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--jurisdiction-2) 18%, transparent), transparent);
+  border-bottom: 2px solid var(--jurisdiction-2);
+}
+.assistant-head.j3 {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--jurisdiction-3) 18%, transparent), transparent);
+  border-bottom: 2px solid var(--jurisdiction-3);
+}
+.assistant-head.j4 {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--jurisdiction-4) 18%, transparent), transparent);
+  border-bottom: 2px solid var(--jurisdiction-4);
+}
+.jflag {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  color: #141414;
+  flex-shrink: 0;
+}
+.jflag.j1 {
+  background: var(--jurisdiction-1);
+}
+.jflag.j2 {
+  background: var(--jurisdiction-2);
+}
+.jflag.j3 {
+  background: var(--jurisdiction-3);
+}
+.jflag.j4 {
+  background: var(--jurisdiction-4);
 }
 .assistant-tag {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11.5px;
-  color: var(--parchment);
+  font-size: 11px;
+  color: var(--text-soft);
   position: relative;
   cursor: help;
-  border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+  border-bottom: 1px dotted var(--border);
+  min-width: 0;
 }
 .assistant-tag .preview {
   display: none;
   position: absolute;
-  top: 24px;
+  top: 22px;
   left: 0;
   width: 260px;
-  background: rgba(14, 16, 20, 0.95);
-  border: 1px solid rgba(156, 135, 212, 0.35);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 11px 13px;
-  font-family: "Newsreader", serif;
-  font-style: italic;
   font-size: 12.5px;
   line-height: 1.55;
-  color: var(--parchment);
+  color: var(--text-primary);
   box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
   z-index: 5;
 }
@@ -583,55 +819,61 @@ body {
   display: block;
 }
 .assistant-body {
-  padding: 18px 20px 18px;
+  padding: 18px 20px;
 }
 .assistant-summary {
-  font-family: "Newsreader", serif;
-  font-size: 16.5px;
-  color: var(--ink-text);
+  font-weight: 600;
+  font-size: 16px;
   margin: 0 0 14px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
-.assistant-body .quote-block {
-  background: linear-gradient(var(--highlighter), var(--highlighter));
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  border-left: 3px solid var(--ink-text);
+.quote-block {
+  background: color-mix(in srgb, var(--jurisdiction-1) 8%, transparent);
+  border-left: 3px solid var(--jurisdiction-1);
   padding: 11px 14px;
   margin: 0 0 14px;
 }
-.assistant-body .quote-label {
-  font-family: "Space Grotesk", sans-serif;
+.quote-block.j2 {
+  background: color-mix(in srgb, var(--jurisdiction-2) 9%, transparent);
+  border-left-color: var(--jurisdiction-2);
+}
+.quote-block.j3 {
+  background: color-mix(in srgb, var(--jurisdiction-3) 9%, transparent);
+  border-left-color: var(--jurisdiction-3);
+}
+.quote-block.j4 {
+  background: color-mix(in srgb, var(--jurisdiction-4) 9%, transparent);
+  border-left-color: var(--jurisdiction-4);
+}
+.quote-label {
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   margin: 0 0 4px;
+  font-weight: 600;
 }
-.assistant-body .quote-text {
+.quote-text {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.6;
-  color: var(--ink-text);
+  color: var(--text-primary);
   margin: 0;
 }
-.assistant-body .reasoning {
-  font-family: "Newsreader", serif;
-  font-size: 14.5px;
+.reasoning {
+  font-size: 14px;
   line-height: 1.65;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   margin: 0 0 16px;
 }
 .assistant-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid var(--kraft-shadow);
+  border-top: 1px solid var(--border);
   padding-top: 13px;
+  gap: 12px;
 }
-/* ---- left-hand footer group: grounding note + the secondary "Export as
-   Word" text link, kept together and away from the stamp so the stamp reads
-   as the one thing with full visual weight on the row ---- */
 .assistant-footer-left {
   display: flex;
   align-items: center;
@@ -639,30 +881,32 @@ body {
   min-width: 0;
   flex: 1 1 auto;
 }
-.assistant-footer .grounding-note {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 10.5px;
-  color: var(--ink-text-soft);
+.grounding-note {
+  font-size: 11px;
+  color: var(--text-soft);
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   max-width: 60%;
 }
-.assistant-footer .grounding-note .dot {
+.grounding-note span:not(.dot) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--seal-green);
+  background: var(--status-green);
   flex-shrink: 0;
 }
-/* ---- export-as-word: a subtle text link, not a bordered button — it's a
-   secondary utility action and shouldn't compete with the verdict stamp ---- */
 .export-link-btn {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   background: none;
   border: none;
   padding: 0;
@@ -672,9 +916,10 @@ body {
   text-decoration: underline;
   text-decoration-color: transparent;
   transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  font-family: "Sora", sans-serif;
 }
 .export-link-btn:hover:not(:disabled) {
-  color: var(--gazette-gold);
+  color: var(--text-primary);
   text-decoration-color: currentColor;
 }
 .export-link-btn:disabled {
@@ -682,33 +927,36 @@ body {
   opacity: 0.5;
 }
 
-/* ---- verdict stamp: static, rotated, no animation (replaces the
-   split-flap experiment from the v4 mockup — the locked design dropped it) ---- */
+/* Static, rotated stamp — the rotation was carried forward from the prior
+   design at the user's explicit request before the reference sketch had it
+   itself; the "final" reference has since adopted the same rotation. */
 .stamp {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.05em;
+  display: inline-block;
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  border: 2px solid currentColor;
-  border-radius: 5px;
-  padding: 6px 12px 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1.5px solid currentColor;
   transform: rotate(-4deg);
+  flex-shrink: 0;
 }
 .stamp.compliant {
-  color: var(--seal-green);
-}
-.stamp.review {
-  color: var(--stamp-review);
+  color: var(--status-green);
 }
 .stamp.noncompliant {
-  color: var(--seal-red);
+  color: var(--status-red);
+}
+.stamp.review {
+  color: var(--status-amber);
 }
 .stamp.conflict {
-  color: var(--archive-plum);
+  color: var(--status-violet);
 }
 
-/* ---- retrieval trace (replaces generic typing dots) ---- */
+/* ---- retrieval trace ---- */
 .typing-row {
   display: none;
   align-items: flex-start;
@@ -722,20 +970,19 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  background: var(--gazette-gold);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-family: "Fraunces", serif;
-  font-style: italic;
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--ink-navy-deep);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--text-primary);
 }
 .trace-box {
-  background: rgba(30, 33, 40, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 4px 16px 16px 16px;
   padding: 13px 16px;
   min-width: 280px;
@@ -743,7 +990,7 @@ body {
 .trace-line {
   font-family: "IBM Plex Mono", monospace;
   font-size: 11.5px;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   display: flex;
   align-items: center;
   gap: 7px;
@@ -752,7 +999,7 @@ body {
   animation: trace-in 0.3s ease-out forwards;
 }
 .trace-line .check {
-  color: var(--seal-green);
+  color: var(--status-green);
   width: 12px;
   flex-shrink: 0;
 }
@@ -781,9 +1028,7 @@ body {
 
 /* ---- input bar ---- */
 .input-bar-wrap {
-  padding: 16px 32px 22px;
-  position: relative;
-  z-index: 1;
+  padding: 0 32px 22px;
 }
 .chip-row {
   display: flex;
@@ -792,15 +1037,19 @@ body {
   margin-bottom: 12px;
 }
 .chip {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Sora", sans-serif;
   font-size: 12px;
-  color: var(--parchment-dim);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-soft);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
   padding: 7px 13px;
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.chip:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
 }
 .new-check-btn:focus-visible,
 .nav-item:focus-visible,
@@ -810,68 +1059,62 @@ body {
 .send-btn:focus-visible,
 .export-link-btn:focus-visible,
 .audit-export-btn:focus-visible,
+.profile-trigger:focus-visible,
+.profile-link-btn:focus-visible,
+.profile-submit-btn:focus-visible,
+.profile-logout-btn:focus-visible,
+.profile-modal-close:focus-visible,
 .regulator-checkbox input[type="checkbox"]:focus-visible {
-  outline: 2px solid var(--gazette-gold);
+  outline: 2px solid var(--text-primary);
   outline-offset: 2px;
-}
-/* .input-bar textarea is intentionally borderless (transparent, blends into
-   the pill) — so its focus indicator has to live on the parent pill instead
-   of the textarea itself, same idea as .auth-field input's focus border,
-   just applied via :focus-within since the border lives one element up. */
-.input-bar:focus-within {
-  border-color: var(--gazette-gold);
-}
-.chip:hover {
-  background: rgba(156, 135, 212, 0.14);
-  color: var(--gazette-gold);
-  border-color: rgba(156, 135, 212, 0.4);
 }
 .input-bar {
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  background: rgba(34, 37, 44, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 10px 10px 10px 20px;
-  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.5);
+}
+.input-bar:focus-within {
+  border-color: var(--text-primary);
 }
 .input-bar textarea {
   flex: 1;
   border: none;
   background: transparent;
   resize: none;
-  font-family: "Newsreader", serif;
-  font-size: 15px;
-  color: var(--ink-text);
+  font-family: "Sora", sans-serif;
+  font-size: 14.5px;
+  color: var(--text-primary);
   outline: none;
   max-height: 120px;
   line-height: 1.5;
   padding: 6px 0;
 }
 .input-bar textarea::placeholder {
-  color: #8890a0;
-  font-style: italic;
+  color: var(--text-soft);
 }
 .send-btn {
   height: 38px;
   padding: 0 20px;
   border-radius: 10px;
-  background: var(--ink-navy);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-family: "Space Grotesk", sans-serif;
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+  border: none;
+  font-family: "Sora", sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-text);
+  font-weight: 700;
+  color: var(--ink-base);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: filter 0.15s ease, transform 0.15s ease;
 }
 .send-btn:hover:not(:disabled) {
-  background: var(--ink-navy-deep);
+  filter: brightness(1.08);
   transform: translateY(-1px);
 }
 .send-btn:active:not(:disabled) {
@@ -882,9 +1125,8 @@ body {
   opacity: 0.5;
 }
 .input-hint {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   text-align: center;
   margin-top: 10px;
 }
@@ -902,11 +1144,11 @@ body {
   gap: 6px;
 }
 .diff-input-label {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   padding-left: 6px;
 }
 .diff-compare-footer {
@@ -923,6 +1165,7 @@ body {
 .regulator-select {
   display: flex;
   gap: 18px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
   padding-left: 6px;
 }
@@ -930,48 +1173,45 @@ body {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12.5px;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   cursor: pointer;
 }
 .regulator-checkbox input[type="checkbox"] {
-  accent-color: var(--gazette-gold);
+  accent-color: var(--text-primary);
   width: 14px;
   height: 14px;
   cursor: pointer;
 }
 
-/* ---- shared: result banner (Policy Diff's flip verdict / Compare
-   Jurisdictions' disagreement) and side-by-side bubble columns ---- */
+/* ---- shared: result banner + side-by-side bubble columns ---- */
 .result-banner {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
   padding: 13px 18px;
   border-radius: 8px;
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
   border-left: 3px solid currentColor;
-  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.45);
 }
 .result-banner.green {
-  color: var(--seal-green);
+  color: var(--status-green);
 }
 .result-banner.red {
-  color: var(--seal-red);
+  color: var(--status-red);
 }
 .result-banner.review {
-  color: var(--stamp-review);
+  color: var(--status-amber);
 }
 .result-banner.plum {
-  color: var(--archive-plum);
+  color: var(--status-violet);
 }
 .result-banner.neutral {
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
 }
 
 .diff-bubble-row {
@@ -985,11 +1225,11 @@ body {
   min-width: 0;
 }
 .diff-bubble-col-label {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   margin: 0 0 8px;
 }
 .diff-bubble-col .bubble-assistant {
@@ -1000,17 +1240,13 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--border);
   border-radius: 4px;
 }
 
 /* ==========================================================================
-   Panel-layout tools (Audit Trail, Clause Graph) — full-width dedicated
-   views under the same .chat-header, not message bubbles. .exhibit-tab and
-   @keyframes fade-up survive from the old design system because Clause
-   Graph's clause-detail side panel still uses that exact pill treatment.
+   Panel-layout tools (Audit Trail, Clause Graph)
    ========================================================================== */
-
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -1025,14 +1261,11 @@ body {
 .panel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px;
-  position: relative;
-  z-index: 1;
+  padding: 24px 32px 28px;
 }
 .intake-hint {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
 }
 
 /* ---------- Audit Trail ---------- */
@@ -1043,14 +1276,14 @@ body {
   align-items: flex-end;
   margin-bottom: 22px;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border);
 }
 .audit-filters label {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--parchment-dim);
+  color: var(--text-soft);
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1060,73 +1293,67 @@ body {
 .audit-filters input[type="date"] {
   font-family: "IBM Plex Mono", monospace;
   font-size: 13px;
-  color: var(--ink-text);
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  color: var(--text-primary);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
   padding: 7px 10px;
   outline: none;
   transition: border-color 0.2s ease;
 }
 .audit-filters select:focus,
 .audit-filters input:focus {
-  border-color: var(--gazette-gold);
+  border-color: var(--text-primary);
 }
-
 .audit-export-btn {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.03em;
-  background: var(--ink-navy);
-  color: var(--ink-text);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+  color: var(--ink-base);
+  border: none;
   padding: 9px 18px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: filter 0.15s ease, transform 0.15s ease;
   margin-left: auto;
+  font-family: "Sora", sans-serif;
 }
 .audit-export-btn:hover:not(:disabled) {
-  background: var(--ink-navy-deep);
+  filter: brightness(1.08);
   transform: translateY(-1px);
 }
 .audit-export-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
-
 .audit-empty,
 .audit-error {
-  font-family: "Newsreader", serif;
-  font-style: italic;
   font-size: 15px;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   padding: 32px 0;
   text-align: center;
 }
 .audit-error {
-  color: var(--seal-red);
+  color: var(--status-red);
 }
-
 .audit-table-wrap {
   overflow-x: auto;
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.4);
 }
 .audit-table {
   width: 100%;
   border-collapse: collapse;
 }
 .audit-table th {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--parchment);
-  background: var(--ink-navy-deep);
+  color: var(--text-primary);
+  background: var(--panel-2);
   text-align: left;
   padding: 11px 14px;
   white-space: nowrap;
@@ -1138,49 +1365,43 @@ body {
   border-radius: 0 10px 0 0;
 }
 .audit-table td {
-  font-family: "Newsreader", serif;
   font-size: 14px;
-  color: var(--ink-text);
+  color: var(--text-primary);
   padding: 11px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
 .audit-table tbody tr:last-child td {
   border-bottom: none;
 }
 .audit-table tbody tr:hover {
-  background: rgba(156, 135, 212, 0.06);
+  background: var(--panel-2);
 }
 .audit-table .audit-mono {
   font-family: "IBM Plex Mono", monospace;
   font-size: 12.5px;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   white-space: nowrap;
 }
-
-/* Simple static colored text, not a badge pill — split-flap is reserved
-   for live results, historical rows just get a plain colored verdict word. */
 .verdict-badge {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 .verdict-badge.compliant {
-  color: var(--seal-green);
+  color: var(--status-green);
 }
 .verdict-badge.noncompliant {
-  color: var(--seal-red);
+  color: var(--status-red);
 }
 .verdict-badge.review {
-  color: var(--stamp-review);
+  color: var(--status-amber);
 }
 .verdict-badge.conflict {
-  color: var(--archive-plum);
+  color: var(--status-violet);
 }
-
 .verdict-diff {
   display: inline-flex;
   align-items: center;
@@ -1188,15 +1409,11 @@ body {
   flex-wrap: wrap;
 }
 .verdict-diff-arrow {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
 }
 
-/* ---------- clause graph (structure unchanged from the accessibility pass
-   — keyboard nav, mobile-overflow fixes, centering forces all still apply.
-   Only the fill/stroke colors below and the D3 fallback hex values in
-   ClauseGraphView.jsx were re-themed for the dark palette.) ---------- */
+/* ---------- clause graph ---------- */
 .clause-graph-controls {
   display: flex;
   align-items: center;
@@ -1209,19 +1426,19 @@ body {
   align-items: center;
   gap: 10px;
   min-width: 0;
-  font-family: "Space Grotesk", sans-serif;
   font-size: 10.5px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
 }
 .clause-graph-select-label select {
   font-family: "IBM Plex Mono", monospace;
   font-size: 13px;
-  color: var(--ink-text);
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  color: var(--text-primary);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
   padding: 7px 10px;
   outline: none;
   min-width: 0;
@@ -1229,9 +1446,8 @@ body {
   transition: border-color 0.2s ease;
 }
 .clause-graph-select-label select:focus {
-  border-color: var(--gazette-gold);
+  border-color: var(--text-primary);
 }
-
 .clause-graph-layout {
   display: flex;
   gap: 24px;
@@ -1241,10 +1457,9 @@ body {
 .clause-graph-canvas {
   flex: 1 1 560px;
   min-width: 0;
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 .clause-graph-canvas svg {
@@ -1252,63 +1467,59 @@ body {
 }
 .clause-graph-canvas svg circle:focus {
   outline: none;
-  stroke: var(--gazette-gold);
+  stroke: var(--text-primary);
   stroke-width: 3px;
 }
 .clause-graph-empty {
-  font-family: "Newsreader", serif;
-  font-style: italic;
   font-size: 15px;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   padding: 60px 40px;
   text-align: center;
 }
-
 .clause-detail {
   flex: 0 0 320px;
   min-width: 260px;
-  background: var(--kraft);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.4);
 }
 .clause-detail-body {
   padding: 22px 24px 24px;
 }
 .clause-detail-section {
-  font-family: "Space Grotesk", sans-serif;
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-text-soft);
+  color: var(--text-soft);
   margin: 0 0 14px;
 }
 .clause-detail-text {
-  font-family: "Newsreader", serif;
   font-size: 15px;
   line-height: 1.7;
-  color: var(--ink-text);
+  color: var(--text-primary);
   margin: 0;
   max-height: 480px;
   overflow-y: auto;
 }
-
 .exhibit-tab {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-family: "IBM Plex Mono", monospace;
   font-size: 12px;
-  color: var(--parchment);
-  background: var(--ink-navy);
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--panel-2);
   padding: 7px 16px 6px;
-  border-radius: 3px 3px 0 0;
+  border-radius: 6px 6px 0 0;
   margin-left: 22px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   opacity: 0;
   animation: fade-up 0.4s ease-out forwards;
   animation-delay: calc(var(--seq, 0s) + 0.05s);
 }
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
@@ -1318,8 +1529,6 @@ body {
     opacity: 1 !important;
     transform: none !important;
   }
-  /* .trace-line's opacity:0 + animation:...forwards pattern would otherwise
-     stay permanently invisible once the animation is blanket-disabled above. */
   .trace-line {
     opacity: 1 !important;
     transform: none !important;
@@ -1327,68 +1536,402 @@ body {
 }
 
 /* ==========================================================================
-   NARROW VIEWPORT (~700px and below — covers the ~400px case explicitly
-   checked). There were zero media queries anywhere in this file before this
-   block — confirmed via a real 400px Playwright run that the fixed 264px
-   sidebar alone consumes 66% of the viewport, and the Workspace textarea
-   collapses to literally not visible/interactable. This is a functional
-   fix (stack sidebar above content, compact it, hide secondary chrome),
-   not a visual redesign of the locked desktop layout — everything above
-   700px is completely untouched.
+   HOME / LANDING PAGE (pre-login) — no reference precedent, designed fresh
+   with the same tokens/fonts as everything else.
    ========================================================================== */
-@media (max-width: 700px) {
+.landing {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  border-bottom: 1px solid var(--border);
+}
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.landing-nav-btn {
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.landing-nav-btn.ghost {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+.landing-nav-btn.ghost:hover {
+  border-color: var(--text-primary);
+}
+.landing-nav-btn.solid {
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+  border: none;
+  color: var(--ink-base);
+}
+.landing-nav-btn.solid:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.landing-nav-btn:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+.landing-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+.landing-hero h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  max-width: 780px;
+  margin: 0 0 20px;
+}
+.landing-hero h1 span {
+  background: linear-gradient(90deg, var(--jurisdiction-1), var(--jurisdiction-2), var(--jurisdiction-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.landing-hero p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  max-width: 560px;
+  margin: 0 0 32px;
+}
+.landing-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.landing-cta-primary {
+  font-family: "Sora", sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-base);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+  border: none;
+  border-radius: 10px;
+  padding: 13px 26px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.landing-cta-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.landing-cta-primary:focus-visible,
+.landing-jflag-legend + .landing-features button:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+.landing-trust {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+
+.landing-jflag-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 44px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.landing-jflag-legend .jflag {
+  font-size: 10px;
+  padding: 4px 9px;
+}
+
+/* Illustrative preview card — reuses the exact same .bubble-assistant/
+   .assistant-head/.jflag/.stamp classes the real Workspace renders, so
+   it's a real slice of the app's own visual language, not a generic
+   marketing mockup. The caption makes clear it's static, not interactive. */
+.landing-preview {
+  margin-top: 44px;
+  max-width: 480px;
+  width: 100%;
+}
+.landing-preview-card {
+  max-width: none;
+  text-align: left;
+}
+.landing-preview-caption {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 920px;
+  width: 100%;
+  margin-top: 56px;
+  text-align: left;
+}
+.landing-feature {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.landing-feature-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.landing-feature-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+/* ---- "How it works" — 3 numbered steps, structurally borrowed from the
+   Stitch reference's equivalent section, copy rewritten to describe the
+   real flow (no document upload, no pre-mapped jurisdiction library). ---- */
+.landing-how {
+  padding: 72px 24px;
+  border-top: 1px solid var(--border);
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+.landing-how h2 {
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 48px;
+}
+.landing-how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.landing-how-step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.landing-how-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink-base);
+  background: linear-gradient(120deg, var(--jurisdiction-1), var(--jurisdiction-2));
+}
+.landing-how-step h4 {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 4px 0 6px;
+}
+.landing-how-step p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+/* ---- closing CTA — real sign-up action, no fabricated "cut audit time by
+   X%" stat like the Stitch reference had. ---- */
+.landing-cta-section {
+  padding: 72px 24px 80px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.landing-cta-section h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+.landing-cta-section p {
+  font-size: 14.5px;
+  color: var(--text-soft);
+  margin: 0 0 24px;
+}
+
+.landing-footer-full {
+  padding: 40px 40px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: space-between;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+.landing-footer-brand {
+  max-width: 320px;
+}
+.landing-footer-brand p {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+.landing-footer-heading {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin: 0 0 14px;
+}
+.landing-footer-tools ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.landing-footer-tools li {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.landing-footer {
+  padding: 20px 40px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+/* ==========================================================================
+   NARROW VIEWPORT — hamburger top bar + slide-out sidebar drawer.
+   Below ~800px the fixed 264px sidebar would consume the majority of the
+   viewport, so it becomes an off-canvas drawer instead: closed by default,
+   opened via the top bar's hamburger, closed via the backdrop or the X.
+   `inert` (applied in Sidebar.jsx, not here) removes the closed drawer's
+   contents from the tab order — translateX alone doesn't do that, a real
+   bug found and fixed in the earlier accessibility pass.
+   ========================================================================== */
+@media (max-width: 800px) {
   body {
-    flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
   }
-  .sidebar {
-    width: 100%;
-    flex-shrink: 1;
-    padding: 14px 16px;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    padding: 0 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    z-index: 30;
   }
-  .side-wordmark {
-    font-size: 20px;
-    margin-bottom: 2px;
+  .mobile-topbar-hamburger {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 16px;
   }
-  .side-sub {
-    margin-bottom: 14px;
+  .mobile-topbar-hamburger:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
   }
-  .new-check-btn {
-    margin-bottom: 14px;
-  }
-  /* Section headers + Recent/Pinned history + footer add a lot of vertical
-     height for content that isn't essential to complete a quick check on a
-     small screen — collapsed here, not removed from the DOM (still in the
-     tab order for keyboard/screen-reader users who scroll to them). */
-  .nav-label,
-  .sidebar-divider,
-  .recent-row,
-  .recent-empty,
-  .sidebar-footer {
-    display: none;
-  }
-  /* The 5 tool buttons become a horizontal, wrapping chip row instead of a
-     vertical list, so the sidebar's height stays small. */
-  .nav-item {
-    display: inline-flex;
-    width: auto;
-    margin: 0 6px 6px 0;
-    padding: 8px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
+  .mobile-topbar .wordmark {
+    font-size: 17px;
+    margin: 0;
   }
 
+  .mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 84vw;
+    max-width: 300px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .sidebar-close-btn:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+
+  .main {
+    padding-top: 54px;
+  }
   .chat-header,
   .panel-content,
   .chat-thread,
   .input-bar-wrap {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
   .chat-header {
     flex-wrap: wrap;
@@ -1398,10 +1941,20 @@ body {
   .bubble-assistant {
     max-width: 100%;
   }
-
-  /* Compare Jurisdictions / Policy Diff side-by-side columns and Clause
-     Graph's canvas+detail pair already use flex-wrap + flex-basis
-     (.diff-bubble-col, .clause-graph-layout's children) from the earlier
-     accessibility pass, so they stack on their own once there's no 264px
-     sidebar competing for width — verified via screenshot, not assumed. */
+  .landing-nav {
+    padding: 18px 20px;
+  }
+  .landing-features {
+    margin-top: 40px;
+  }
+  .landing-how {
+    padding: 56px 20px;
+  }
+  .landing-cta-section {
+    padding: 56px 20px 64px;
+  }
+  .landing-footer-full {
+    padding: 32px 20px 24px;
+    gap: 28px;
+  }
 }

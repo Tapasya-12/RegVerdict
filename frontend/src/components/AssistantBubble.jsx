@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { exportReportDocx } from "../api";
+import { jurisdictionClass, jurisdictionCode } from "../jurisdiction";
 
 const STAMP_CLASS_BY_VERDICT = {
   Compliant: "compliant",
@@ -14,11 +15,17 @@ const STAMP_CLASS_BY_VERDICT = {
 // policyText is the original submitted text (not result.policy_summary,
 // which is the LLM's rephrased one-liner) — export needs it to re-run
 // generate_compliance_report() server-side and get the same verdict back.
-export default function AssistantBubble({ result, policyText }) {
+// regulators is the real, sorted list from /api/documents (via App.jsx) —
+// it's what jurisdictionClass positionally assigns j1..j4 from, so the
+// citation tag's color is never hardcoded to a specific regulator name.
+export default function AssistantBubble({ result, policyText, regulators }) {
   const source = result.source_clause;
   const tag = source ? `${source.document} §${source.clause_number}` : "no matching clause found";
   const hasQuote = !!result.evidence_quote && result.evidence_quote.trim().length > 0;
   const stampClass = STAMP_CLASS_BY_VERDICT[result.verdict] || "review";
+
+  const code = source ? jurisdictionCode(source.document) : null;
+  const jClass = source ? jurisdictionClass(source.document, regulators) : null;
 
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState(null);
@@ -39,8 +46,8 @@ export default function AssistantBubble({ result, policyText }) {
 
   return (
     <div className="bubble-assistant">
-      <div className="assistant-head">
-        <span className="avatar">R</span>
+      <div className={`assistant-head${jClass ? ` ${jClass}` : ""}`}>
+        {code && <span className={`jflag ${jClass}`}>{code}</span>}
         <span className="assistant-tag">
           {tag}
           {hasQuote && (
@@ -50,7 +57,7 @@ export default function AssistantBubble({ result, policyText }) {
       </div>
       <div className="assistant-body">
         <p className="assistant-summary">{result.policy_summary}</p>
-        <div className="quote-block">
+        <div className={`quote-block${jClass ? ` ${jClass}` : ""}`}>
           <p className="quote-label">Verbatim evidence</p>
           <p className="quote-text">
             {hasQuote
@@ -60,7 +67,7 @@ export default function AssistantBubble({ result, policyText }) {
         </div>
         <p className="reasoning">{result.reasoning}</p>
         {exportError && (
-          <p className="input-hint" style={{ color: "var(--seal-red)", marginBottom: 10 }}>
+          <p className="input-hint" style={{ color: "var(--status-red)", marginBottom: 10 }}>
             {exportError}
           </p>
         )}
@@ -69,12 +76,14 @@ export default function AssistantBubble({ result, policyText }) {
             <div className="grounding-note">
               <span
                 className="dot"
-                style={!result.grounding_verified ? { background: "var(--seal-red)" } : undefined}
+                style={!result.grounding_verified ? { background: "var(--status-red)" } : undefined}
               ></span>
-              {result.grounding_note ||
-                (result.grounding_verified
-                  ? "Verified verbatim against source clause"
-                  : "No retrieved chunk could ground this claim.")}
+              <span>
+                {result.grounding_note ||
+                  (result.grounding_verified
+                    ? "Verified verbatim against source clause"
+                    : "No retrieved chunk could ground this claim.")}
+              </span>
             </div>
             {policyText && (
               <button className="export-link-btn" onClick={handleExport} disabled={exporting}>

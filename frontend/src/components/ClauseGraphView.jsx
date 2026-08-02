@@ -72,7 +72,7 @@ export default function ClauseGraphView() {
 
     const link = zoomLayer
       .append("g")
-      .attr("stroke", "var(--gazette-gold, #9c87d4)")
+      .attr("stroke", "var(--text-soft, #8A9088)")
       .attr("stroke-opacity", 0.45)
       .selectAll("line")
       .data(edges)
@@ -85,8 +85,8 @@ export default function ClauseGraphView() {
       .data(nodes)
       .join("circle")
       .attr("r", NODE_RADIUS)
-      .attr("fill", "var(--parchment, #ffffff)")
-      .attr("stroke", "var(--kraft-shadow, #343841)")
+      .attr("fill", "var(--panel-2, #262A28)")
+      .attr("stroke", "var(--jurisdiction-2, #4A8FA3)")
       .attr("stroke-width", 1.5)
       .attr("tabindex", 0)
       .attr("role", "button")
@@ -110,7 +110,7 @@ export default function ClauseGraphView() {
       .attr("dy", "0.32em")
       .attr("font-family", "IBM Plex Mono, monospace")
       .attr("font-size", 9.5)
-      .attr("fill", "var(--ink-navy-deep, #101216)")
+      .attr("fill", "var(--text-primary, #EDEFEC)")
       .style("pointer-events", "none");
 
     node.call(
@@ -210,7 +210,7 @@ export default function ClauseGraphView() {
       </div>
 
       {error && (
-        <p className="intake-hint" style={{ color: "var(--seal-red)", marginTop: 24 }}>
+        <p className="intake-hint" style={{ color: "var(--status-red)", marginTop: 24 }}>
           {error}
         </p>
       )}

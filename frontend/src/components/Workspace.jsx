@@ -123,7 +123,7 @@ export default function Workspace({ indexedChunks, regulators, pendingSession, o
             </div>
           ) : (
             <div className="msg-row assistant" key={msg.id}>
-              <AssistantBubble result={msg.result} policyText={msg.policyText} />
+              <AssistantBubble result={msg.result} policyText={msg.policyText} regulators={regulators} />
             </div>
           )
         )}
@@ -131,7 +131,7 @@ export default function Workspace({ indexedChunks, regulators, pendingSession, o
         <RetrievalTrace active={reviewing} />
 
         {error && (
-          <p className="input-hint" style={{ color: "var(--seal-red)" }}>
+          <p className="input-hint" style={{ color: "var(--status-red)" }}>
             {error}
           </p>
         )}

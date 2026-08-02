@@ -7,6 +7,7 @@ import AuditTrail from "./components/AuditTrail";
 import ClauseGraphView from "./components/ClauseGraphView";
 import Login from "./components/Login";
 import ResetPassword from "./components/ResetPassword";
+import HomeScreen from "./components/HomeScreen";
 import { apiFetch, clearToken, getToken, onUnauthorized } from "./api";
 
 // The API returns snake_case rows straight from SQLite (display_title,
@@ -35,6 +36,11 @@ export default function App() {
   const [resetToken, setResetToken] = useState(getResetToken);
   const [resetJustCompleted, setResetJustCompleted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken());
+  // Landing page is the default pre-auth screen; showAuth flips to the
+  // Login/Signup card once the visitor picks one from the landing page (or
+  // a 401 elsewhere in the app forces a re-login — see onUnauthorized below).
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
   const [activeTool, setActiveTool] = useState("workspace");
   const [workspaceResetKey, setWorkspaceResetKey] = useState(0);
   const [recentChats, setRecentChats] = useState([]);
@@ -46,7 +52,12 @@ export default function App() {
   // token, cleared token, tampered token) routes here — bounce to the login
   // screen instead of leaving the app sitting on a silently broken tool.
   useEffect(() => {
-    onUnauthorized(() => setIsAuthenticated(false));
+    // A 401 anywhere means an expired/invalid session, not a fresh visit —
+    // goes straight to the login form, not back to the landing page.
+    onUnauthorized(() => {
+      setIsAuthenticated(false);
+      setShowAuth(true);
+    });
   }, []);
 
   function refreshRecentQueries() {
@@ -89,6 +100,7 @@ export default function App() {
   function handleLogout() {
     clearToken();
     setIsAuthenticated(false);
+    setShowAuth(false); // back to the landing page, not straight to the login form
   }
 
   function handleNewCheck() {
@@ -153,23 +165,35 @@ export default function App() {
           window.history.replaceState({}, "", "/");
           setResetToken(null);
           setResetJustCompleted(true);
+          setAuthMode("login");
+          setShowAuth(true); // land on the login form (with the confirmation message), not back on the landing page
         }}
       />
     );
   }
 
   if (!isAuthenticated) {
+    if (!showAuth) {
+      return (
+        <HomeScreen
+          onEnter={(mode) => {
+            setAuthMode(mode || "login");
+            setShowAuth(true);
+          }}
+        />
+      );
+    }
     return (
       <Login
         onLoginSuccess={() => setIsAuthenticated(true)}
         justResetPassword={resetJustCompleted}
+        initialMode={authMode}
       />
     );
   }
 
   return (
     <>
-      <div className="ambient"></div>
       <Sidebar
         activeTool={activeTool}
         onSelectTool={setActiveTool}

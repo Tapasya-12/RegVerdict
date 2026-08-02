@@ -1,28 +1,29 @@
 /** @type {import('tailwindcss').Config} */
+// Components use hand-written semantic CSS classes (src/index.css), not
+// Tailwind utilities — this config exists so the @tailwind directives don't
+// error, and so these tokens are available if a component ever needs one.
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        "ink-navy": "#17264D",
-        "ink-navy-deep": "#0E1730",
-        parchment: "#F6EFDD",
-        "parchment-dim": "#D8B978",
-        kraft: "#FBF3E1",
-        "kraft-shadow": "#E3CD98",
-        "ink-text": "#1E2440",
-        "ink-text-soft": "#565C7C",
-        "seal-green": "#146B42",
-        "seal-red": "#C13B2A",
-        "gazette-gold": "#D4941A",
-        "archive-plum": "#5A3E8C",
+        "ink-base": "#131515",
+        panel: "#1C1F1E",
+        "panel-2": "#262A28",
+        "text-primary": "#EDEFEC",
+        "text-soft": "#8A9088",
+        "jurisdiction-1": "#C97D4A",
+        "jurisdiction-2": "#4A8FA3",
+        "jurisdiction-3": "#8C6FB0",
+        "jurisdiction-4": "#7FA36E",
+        "status-green": "#5CA97E",
+        "status-red": "#C4634F",
+        "status-amber": "#C4954A",
+        "status-violet": "#B0709E",
       },
       fontFamily: {
-        display: ["Fraunces", "serif"],
-        body: ["Newsreader", "serif"],
+        sans: ["Sora", "sans-serif"],
         mono: ["IBM Plex Mono", "monospace"],
-        ui: ["Space Grotesk", "sans-serif"],
-        scrawl: ["Caveat", "cursive"],
       },
     },
   },

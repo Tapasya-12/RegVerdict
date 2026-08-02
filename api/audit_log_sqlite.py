@@ -48,6 +48,19 @@ def append_log(db_path, user_id: int, tool: str, policy_text: str, verdict: str 
             "clause_number": clause_number, "timestamp": timestamp}
 
 
+def count_by_user_id(db_path, user_id: int) -> int:
+    """Total compliance checks (every tool, not just check_compliance) this
+    user has ever run — the profile panel's usage-stats number. A COUNT(*)
+    query rather than len(read_log(...)) so the profile fetch doesn't have
+    to pull every row's full text/verdict/confidence just to count them."""
+    conn = sqlite3.connect(db_path)
+    count = conn.execute(
+        "SELECT COUNT(*) FROM audit_log WHERE user_id = ?", (user_id,)
+    ).fetchone()[0]
+    conn.close()
+    return count
+
+
 def read_log(db_path, verdict: str = None, start_date: str = None, end_date: str = None,
              search: str = None, username: str = None) -> list[dict]:
     """

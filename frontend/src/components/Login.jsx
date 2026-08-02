@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { API_BASE, setToken } from "../api";
 
-export default function Login({ onLoginSuccess, justResetPassword }) {
-  const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
+export default function Login({ onLoginSuccess, justResetPassword, initialMode }) {
+  const [mode, setMode] = useState(initialMode || "login"); // "login" | "signup" | "forgot"
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -92,10 +92,9 @@ export default function Login({ onLoginSuccess, justResetPassword }) {
   if (mode === "forgot") {
     return (
       <div className="auth-screen">
-        <div className="ambient"></div>
         <form className="auth-card" onSubmit={handleForgotSubmit}>
           <div className="auth-wordmark">
-            Reg<em>Verdict</em>
+            Reg<span>Verdict</span>
           </div>
           <div className="auth-sub">Compliance Copilot</div>
 
@@ -133,10 +132,9 @@ export default function Login({ onLoginSuccess, justResetPassword }) {
 
   return (
     <div className="auth-screen">
-      <div className="ambient"></div>
       <form className="auth-card" onSubmit={handleSubmit}>
         <div className="auth-wordmark">
-          Reg<em>Verdict</em>
+          Reg<span>Verdict</span>
         </div>
         <div className="auth-sub">Compliance Copilot</div>
 

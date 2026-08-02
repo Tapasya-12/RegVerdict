@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { classForCode } from "../jurisdiction";
+import { getUsernameFromToken } from "../api";
+import ProfilePanel from "./ProfilePanel";
 
 const TOOLS = [
   { id: "workspace", label: "Compliance Workspace" },
@@ -105,69 +108,132 @@ export default function Sidebar({
 }) {
   const pinned = recentChats.filter((e) => e.pinned);
   const recent = recentChats.filter((e) => !e.pinned);
+  const username = getUsernameFromToken() || "—";
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  // Below ~800px the fixed-width sidebar becomes an off-canvas drawer —
+  // closed by default, opened via the top bar's hamburger, closed via the
+  // backdrop or the X. `inert` (not just the transform) removes its
+  // contents from the tab order while closed on mobile — a transform-
+  // hidden-but-still-tabbable drawer was a real bug found and fixed in an
+  // earlier accessibility pass, worth carrying forward regardless of skin.
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 801px)").matches
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 801px)");
+    const handler = (e) => setIsDesktop(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  function selectAndClose(fn) {
+    return (...args) => {
+      fn(...args);
+      setMobileOpen(false);
+    };
+  }
 
   return (
-    <div className="sidebar">
-      <div className="side-wordmark">
-        Reg<em>Verdict</em>
-      </div>
-      <div className="side-sub">Compliance Copilot</div>
-
-      <button className="new-check-btn" onClick={onNewCheck}>
-        New compliance check
-      </button>
-
-      <div className="nav-label">Tools</div>
-      {TOOLS.map((tool) => (
-        <button
-          key={tool.id}
-          className={`nav-item${activeTool === tool.id ? " active" : ""}`}
-          onClick={() => onSelectTool(tool.id)}
-        >
-          {tool.label}
+    <>
+      <div className="mobile-topbar">
+        <button className="mobile-topbar-hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+          ☰
         </button>
-      ))}
+        <div className="wordmark">
+          Reg<span>Verdict</span>
+        </div>
+      </div>
 
-      <div className="sidebar-divider"></div>
+      {mobileOpen && (
+        <div className="mobile-backdrop" onClick={() => setMobileOpen(false)} aria-hidden="true"></div>
+      )}
 
-      {pinned.length > 0 && (
-        <>
-          <div className="nav-label">Pinned</div>
-          {pinned.map((entry) => (
-            <RecentChatRow
-              key={entry.id}
-              entry={entry}
-              onSelect={onSelectRecent}
-              onPinToggle={onPinToggle}
-              onRename={onRename}
-              onDelete={onDelete}
-            />
+      <div
+        className={`sidebar${mobileOpen ? " open" : ""}`}
+        inert={!isDesktop && !mobileOpen ? true : undefined}
+      >
+        <button className="sidebar-close-btn" onClick={() => setMobileOpen(false)} aria-label="Close menu">
+          ✕
+        </button>
+
+        <div className="wordmark">
+          Reg<span>Verdict</span>
+        </div>
+        <div className="side-sub">Compliance Copilot</div>
+
+        <button className="new-check-btn" onClick={selectAndClose(onNewCheck)}>
+          New compliance check
+        </button>
+
+        <div className="nav-label">Tools</div>
+        {TOOLS.map((tool) => (
+          <button
+            key={tool.id}
+            className={`nav-item${activeTool === tool.id ? " active" : ""}`}
+            onClick={selectAndClose(() => onSelectTool(tool.id))}
+          >
+            {tool.label}
+          </button>
+        ))}
+
+        <div className="sidebar-divider"></div>
+
+        <div className="recent-list">
+          {pinned.length > 0 && (
+            <>
+              <div className="nav-label">Pinned</div>
+              {pinned.map((entry) => (
+                <RecentChatRow
+                  key={entry.id}
+                  entry={entry}
+                  onSelect={selectAndClose(onSelectRecent)}
+                  onPinToggle={onPinToggle}
+                  onRename={onRename}
+                  onDelete={onDelete}
+                />
+              ))}
+            </>
+          )}
+
+          <div className="nav-label">Recent</div>
+          {recent.length === 0 ? (
+            <div className="recent-empty">No recent checks yet</div>
+          ) : (
+            recent.map((entry) => (
+              <RecentChatRow
+                key={entry.id}
+                entry={entry}
+                onSelect={selectAndClose(onSelectRecent)}
+                onPinToggle={onPinToggle}
+                onRename={onRename}
+                onDelete={onDelete}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Real jurisdiction key — one row per regulator actually present in
+            the corpus (via /api/documents through App.jsx), colored with the
+            exact same j1..j4 mapping used on the citation tags themselves. */}
+        <div className="jurisdiction-key">
+          {regulators.map((reg) => (
+            <div className="key-row" key={reg}>
+              <span className={`key-dot ${classForCode(reg, regulators)}`}></span>
+              {reg} citations
+            </div>
           ))}
-        </>
-      )}
-
-      <div className="nav-label">Recent</div>
-      {recent.length === 0 ? (
-        <div className="recent-empty">No recent checks yet</div>
-      ) : (
-        recent.map((entry) => (
-          <RecentChatRow
-            key={entry.id}
-            entry={entry}
-            onSelect={onSelectRecent}
-            onPinToggle={onPinToggle}
-            onRename={onRename}
-            onDelete={onDelete}
-          />
-        ))
-      )}
-
-      <div className="sidebar-footer">
-        {indexedChunks ?? "…"} clauses indexed{regulators.length ? ` · ${regulators.join(" · ")}` : ""}
-        <button className="nav-item" style={{ marginTop: 10, padding: "9px 10px 9px 0" }} onClick={onLogout}>
-          Log out
-        </button>
+          <div className="jurisdiction-key-count">{indexedChunks ?? "…"} clauses indexed</div>
+          <button className="profile-trigger" onClick={() => setProfileOpen(true)}>
+            <span className="profile-avatar">{username[0]?.toUpperCase()}</span>
+            <span className="profile-username">{username}</span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      {profileOpen && <ProfilePanel onClose={() => setProfileOpen(false)} onLogout={onLogout} />}
+    </>
   );
 }

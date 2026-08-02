@@ -111,7 +111,7 @@ export default function CompareJurisdictions({ regulators }) {
               {entries.map(([regulator, result]) => (
                 <div className="diff-bubble-col" key={regulator}>
                   <p className="diff-bubble-col-label">{regulator}</p>
-                  <AssistantBubble result={result} policyText={submittedText} />
+                  <AssistantBubble result={result} policyText={submittedText} regulators={regulators} />
                 </div>
               ))}
             </div>
@@ -121,7 +121,7 @@ export default function CompareJurisdictions({ regulators }) {
         <RetrievalTrace active={comparing} />
 
         {error && (
-          <p className="input-hint" style={{ color: "var(--seal-red)" }}>
+          <p className="input-hint" style={{ color: "var(--status-red)" }}>
             {error}
           </p>
         )}

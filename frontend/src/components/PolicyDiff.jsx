@@ -113,11 +113,11 @@ export default function PolicyDiff({ regulators }) {
               <div className="diff-bubble-row">
                 <div className="diff-bubble-col">
                   <p className="diff-bubble-col-label">Before</p>
-                  <AssistantBubble result={data.original_verdict} policyText={originalPolicyText} />
+                  <AssistantBubble result={data.original_verdict} policyText={originalPolicyText} regulators={regulators} />
                 </div>
                 <div className="diff-bubble-col">
                   <p className="diff-bubble-col-label">After</p>
-                  <AssistantBubble result={data.proposed_verdict} policyText={proposedChangeText} />
+                  <AssistantBubble result={data.proposed_verdict} policyText={proposedChangeText} regulators={regulators} />
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function PolicyDiff({ regulators }) {
         <RetrievalTrace active={comparing} />
 
         {error && (
-          <p className="input-hint" style={{ color: "var(--seal-red)" }}>
+          <p className="input-hint" style={{ color: "var(--status-red)" }}>
             {error}
           </p>
         )}

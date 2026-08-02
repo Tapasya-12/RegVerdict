@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RegVerdict | Compliance at the Speed of Thought</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#3e2d11",
+                        "on-secondary": "#002e6a",
+                        "surface": "#051424",
+                        "surface-dim": "#051424",
+                        "on-surface": "#d4e4fa",
+                        "on-primary": "#283044",
+                        "compliant": "#10b981",
+                        "surface-container-lowest": "#010f1f",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "surface-container-low": "#0d1c2d",
+                        "surface-container": "#122131",
+                        "surface-tint": "#bec6e0",
+                        "error": "#ffb4ab",
+                        "surface-elevated": "#1e293b",
+                        "tertiary": "#dec29a",
+                        "on-tertiary-container": "#957d5a",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-error": "#690005",
+                        "primary-fixed": "#dae2fd",
+                        "outline": "#909097",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-bright": "#2c3a4c",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "primary-container": "#0f172a",
+                        "on-surface-variant": "#c6c6cd",
+                        "border-subtle": "#334155",
+                        "background": "#051424",
+                        "secondary-container": "#0566d9",
+                        "on-error-container": "#ffdad6",
+                        "secondary": "#adc6ff",
+                        "on-primary-container": "#798098",
+                        "error-container": "#93000a",
+                        "review": "#f59e0b",
+                        "non-compliant": "#ef4444",
+                        "tertiary-fixed": "#fcdeb5",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-on-surface": "#233143",
+                        "on-secondary-fixed": "#001a42",
+                        "on-background": "#d4e4fa",
+                        "on-tertiary-fixed": "#271901",
+                        "surface-container-highest": "#273647",
+                        "inverse-surface": "#d4e4fa",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-variant": "#273647",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "outline-variant": "#45464d",
+                        "primary": "#bec6e0",
+                        "on-secondary-container": "#e6ecff",
+                        "secondary-fixed": "#d8e2ff",
+                        "tertiary-container": "#231500",
+                        "surface-container-high": "#1c2b3c",
+                        "inverse-primary": "#565e74",
+                        "cobalt": "#3b82f6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "headline-sm": ["Inter", "sans-serif"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(190, 198, 224, 0.3);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-xl h-16 sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-primary dark:text-on-primary">RegVerdict</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary transition-all uppercase" href="#">Platform</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary transition-all uppercase" href="#">Solutions</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary transition-all uppercase" href="#">Resources</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary transition-all uppercase" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-label-md text-label-md px-4 py-2 text-on-surface-variant hover:text-primary transition-all uppercase">Log In</button>
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-lg font-label-md text-label-md font-bold uppercase transition-transform active:scale-90 duration-150">Sign Up</button>
+</div>
+</header>
+<main class="relative">
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-32 px-gutter overflow-hidden">
+
+<div class="max-w-4xl mx-auto text-center relative z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/20 border border-secondary-container/40 text-secondary mb-8">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Regulatory Copilot v2.4</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg md:text-[64px] md:leading-[72px] mb-8 font-extrabold tracking-tighter text-white text-glow">
+                    Compliance at the <span class="text-secondary">Speed of Thought.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-12">
+                    RegVerdict leverage evidence-backed AI to automate regulatory gap analysis, policy mapping, and audit readiness for high-stakes legal environments.
+                </p>
+<div class="flex flex-col md:flex-row items-center justify-center gap-4">
+<button class="w-full md:w-auto px-8 py-4 bg-secondary-container text-white rounded-lg font-headline-sm text-headline-sm font-bold shadow-lg shadow-secondary-container/20 hover:scale-[1.02] transition-transform">
+                        Start New Analysis
+                    </button>
+<button class="w-full md:w-auto px-8 py-4 border border-border-subtle text-on-surface hover:bg-surface-elevated transition-colors rounded-lg font-headline-sm text-headline-sm font-semibold">
+                        View Interactive Demo
+                    </button>
+</div>
+</div>
+<!-- Dashboard Preview / Visualization -->
+<div class="mt-20 w-full max-w-6xl mx-auto relative group">
+<div class="absolute -inset-4 bg-gradient-to-r from-secondary-container/20 to-primary/10 rounded-2xl blur-2xl group-hover:blur-3xl transition-all"></div>
+<div class="relative glass-panel rounded-xl overflow-hidden shadow-2xl border border-outline-variant/30 aspect-video md:aspect-[21/9]">
+<div class="w-full h-full flex">
+<!-- Sidebar Mock -->
+<div class="w-16 md:w-64 border-r border-outline-variant/30 flex flex-col p-4 bg-surface-container-lowest">
+<div class="h-6 w-32 bg-surface-container-highest rounded mb-8 hidden md:block"></div>
+<div class="space-y-4">
+<div class="h-10 w-full bg-secondary-container/10 rounded flex items-center px-2">
+<div class="h-4 w-4 bg-secondary-container rounded-full"></div>
+</div>
+<div class="h-10 w-full bg-surface-container-high rounded hidden md:block"></div>
+<div class="h-10 w-full bg-surface-container-high rounded hidden md:block"></div>
+</div>
+</div>
+<!-- Content Mock -->
+<div class="flex-1 p-6 md:p-10 space-y-8">
+<div class="flex justify-between items-end">
+<div class="space-y-2">
+<div class="h-8 w-48 bg-surface-bright rounded"></div>
+<div class="h-4 w-32 bg-surface-container-highest rounded"></div>
+</div>
+<div class="flex gap-2">
+<div class="h-10 w-24 bg-compliant/20 border border-compliant/40 rounded flex items-center justify-center">
+<span class="text-compliant font-label-md">98% COMPLIANT</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant/20 p-4">
+<div class="h-4 w-12 bg-surface-bright rounded mb-2"></div>
+<div class="h-8 w-24 bg-secondary-container/20 rounded"></div>
+</div>
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant/20 p-4">
+<div class="h-4 w-12 bg-surface-bright rounded mb-2"></div>
+<div class="h-8 w-24 bg-review/20 rounded"></div>
+</div>
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant/20 p-4">
+<div class="h-4 w-12 bg-surface-bright rounded mb-2"></div>
+<div class="h-8 w-24 bg-non-compliant/20 rounded"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-40"></div>
+</div>
+</div>
+</section>
+<!-- Benefit Sections -->
+<section class="py-32 px-gutter bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-24">
+<h2 class="font-headline-lg text-headline-lg text-white mb-6">Designed for Definitive Evidence</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto">Our "Evidence-Backed AI" architecture ensures every verdict is tied to a primary source, eliminating the risks of hallucination.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Benefit 1 -->
+<div class="group p-8 rounded-xl bg-surface border border-border-subtle hover:border-secondary transition-all">
+<div class="w-12 h-12 rounded-lg bg-secondary-container/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">database</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-white mb-4">Direct Sourcing</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">RegVerdict taps directly into global legislative feeds and internal policy repositories to ensure your analysis is never based on stale data.</p>
+<div class="w-full h-40 rounded-lg bg-cover bg-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="A macro close-up of a high-tech server rack illuminated by cool blue neon lights, suggesting vast amounts of data being processed with precision and security. The lighting is moody and professional, matching a midnight corporate aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBessxY5pQE6n08JuOSVzQiCh_EeZ3-P6WeiEHavINryTJHtYoxUp8AmmKwpFWC_3Snz285O240Nt_LM7KIvB7Z3A2VzkJ821VwxR8ajcI0D3khLB70Oal79qpNK7HC4Tc26AsgeFEHkomJUeMmrq0ag207XVJv19Ecc7-6JmjNEzu_rfQiCczFzHIt3DNjG8C3LugvLRpUin7SEqYqhZiwBDi1L_LvhOyEFoENJXeNnQLV7GE_bHfd')"></div>
+</div>
+<!-- Benefit 2 -->
+<div class="group p-8 rounded-xl bg-surface border border-border-subtle hover:border-secondary transition-all">
+<div class="w-12 h-12 rounded-lg bg-secondary-container/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-white mb-4">Verified Citations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Every AI suggestion includes a deep-link to the exact clause or subsection that triggered the finding. No guessing. No hallucinations.</p>
+<div class="w-full h-40 rounded-lg bg-cover bg-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="An abstract visualization of a digital document where specific lines of text are glowing with a soft blue light, connected by intricate digital threads to a central source of light. This represents the connection between AI findings and primary legal sources in a high-tech legal environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-ORvixhTtkJ1uzkYf3azASxxSgRwJdDbxhQakd3O0MZEIz6D3wf9G_APk9Sy9cz8eZMV7_NHi23JsWLsT_5QNgfHjcE6ojgnHKY3-cnLHxee57ZKHaunq1t4E6xy_FKJLKrqPNqQaR2Dq3GKNHqRziN4wmcCBeHbNzrOj_1Lguz5xXg6VF1qaqsyWnevivmcFZSwvhToYNlATJPTpbQiDssw3biPo3cJx-J8lgSxCmpvmoIfJ9e9k')"></div>
+</div>
+<!-- Benefit 3 -->
+<div class="group p-8 rounded-xl bg-surface border border-border-subtle hover:border-secondary transition-all">
+<div class="w-12 h-12 rounded-lg bg-secondary-container/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-white mb-4">Secure Audit Trails</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Every interaction is logged in an immutable ledger, providing a complete history of how compliance decisions were reached and reviewed.</p>
+<div class="w-full h-40 rounded-lg bg-cover bg-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all" data-alt="A clean, minimalist 3D rendering of interlocking glass cubes that are slightly translucent, representing a secure and transparent data structure or blockchain. The color palette is composed of deep navys and bright cobalt highlights." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3jGAuYaBMdO6h7-B8hM8F1V_LD7FdSPOvLgHBvepglP2sxCcb__VKmSo8szEI8obQLGaRHFDLHACZuSRkR3bkS2zw5xJ_PyIBeHtvxH7jxpTzgwn_PZzlfC0c2_kq4bDNLhc13y6cduwV1ItcB_eFQrqzV2ei5gPp0eQ7BWXnNq7wSRVZLKfQHDAwjM8CN8Ixwss6643z803N01dL5ZAhvAf_7rDvntGdx1DQ1NmGFM6jrUuFmf8q')"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works Section -->
+<section class="py-32 px-gutter overflow-hidden relative">
+<div class="max-w-7xl mx-auto relative z-10">
+<div class="flex flex-col lg:flex-row items-center gap-16">
+<div class="w-full lg:w-1/2">
+<h2 class="font-headline-lg text-headline-lg text-white mb-8">From Policy to Verdict <br/><span class="text-secondary">in Minutes.</span></h2>
+<div class="space-y-12">
+<!-- Step 1 -->
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold font-headline-sm">1</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-2">Ingest Policy</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload your internal governance documents or select from our pre-mapped library of global jurisdictions.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-surface-elevated border border-secondary text-secondary flex items-center justify-center font-bold font-headline-sm">2</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-2">Analyze Gaps</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">The RegVerdict engine cross-references your policies against real-time regulatory requirements using semantic reasoning.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-surface-elevated border border-secondary text-secondary flex items-center justify-center font-bold font-headline-sm">3</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-2">Render Verdict</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Receive a comprehensive report detailing your compliance posture with actionable remediation steps and citations.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-1/2 relative">
+<div class="relative w-full aspect-square bg-surface-container rounded-3xl p-1 overflow-hidden">
+
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="glass-panel p-8 rounded-2xl border-secondary/30 animate-float">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-10 h-10 rounded-full bg-compliant"></div>
+<div class="space-y-1">
+<div class="h-3 w-24 bg-surface-bright rounded"></div>
+<div class="h-2 w-16 bg-surface-container-highest rounded"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="h-2 w-48 bg-surface-container-highest rounded"></div>
+<div class="h-2 w-40 bg-surface-container-highest rounded"></div>
+<div class="h-2 w-44 bg-surface-container-highest rounded"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-gutter">
+<div class="max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-secondary-container/30 via-surface-container-low to-surface-container p-12 text-center border border-outline-variant/30">
+<h2 class="font-headline-lg text-headline-lg text-white mb-6">Ready to automate your compliance workload?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+                    Join leading legal and compliance teams using RegVerdict to cut manual audit time by 75%.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="px-10 py-5 bg-white text-on-primary font-bold rounded-lg hover:bg-secondary transition-colors uppercase tracking-tight">Request Early Access</button>
+<button class="px-10 py-5 border border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-colors uppercase tracking-tight">Talk to an Expert</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest py-20 px-gutter border-t border-outline-variant/20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-1">
+<span class="font-headline-md text-headline-md font-bold text-primary mb-6 block">RegVerdict</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Advanced regulatory copilot for modern legal departments. Built with precision and privacy at the core.
+                </p>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-white mb-6 uppercase tracking-widest">Platform</h5>
+<ul class="space-y-4">
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Compliance Workspace</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Policy Diff</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Audit Trail</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Clause Graph</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-white mb-6 uppercase tracking-widest">Company</h5>
+<ul class="space-y-4">
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">About Us</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Careers</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Legal &amp; Privacy</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary" href="#">Security</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-white mb-6 uppercase tracking-widest">Connect</h5>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant/60">© 2024 RegVerdict AI Inc. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant/60 hover:text-white" href="#">Status</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant/60 hover:text-white" href="#">API Reference</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple scroll interaction for navigation
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-xl', 'bg-surface/95');
+            } else {
+                header.classList.remove('shadow-xl', 'bg-surface/95');
+            }
+        });
+
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.96)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = '';
+            });
+        });
+    </script>
+</body></html>
